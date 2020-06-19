@@ -1,0 +1,81 @@
+type Query {
+  users: [User!]!
+  books: [Book!]!
+  authors: [Author!]!
+  hello: String!
+}
+
+type Mutation {
+  createUser(data: CreateUserInput): AuthPayload!
+  updateUser(data: UpdateUserInput): User!
+  deleteUser(id: ID!): User!
+  createAuthor(data: CreateAuthorInput): Author!
+  updateAuthor(data: UpdateAuthorInput): Author!
+  deleteAuthor: Author!
+  createBook(data: CreateBookInput): Book!
+  updateBook(data: UpdateBookInput): Book!
+  deleteBook: Book!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+}
+
+input CreateAuthorInput {
+  name: String!
+  about: String
+}
+input UpdateAuthorInput {
+  name: String
+  about: String
+}
+
+input CreateBookInput {
+  title: String!
+  sinopse: String
+  published: String!
+  genre: String!
+  pages: Int
+}
+input UpdateBookInput {
+  title: String
+  sinopse: String
+  published: String
+  genre: String
+  pages: Int
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+}
+
+type Book {
+  id: ID!
+  title: String!
+  sinopse: String
+  published: String!
+  genre: String!
+  pages: Int
+}
+
+type Author {
+  id: ID!
+  name: String!
+  about: String
+  books: [Book!]!
+}

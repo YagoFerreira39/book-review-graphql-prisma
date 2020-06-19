@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "prisma": {
+      "schemaPath": "src/generated/prisma.graphql",
+      "extensions": {
+        "endpoints": {
+          "default": "https://book-review-yfer-05143b6625.herokuapp.com/book-review-yfer/dev"
+        }
+      }
+    }
+  }
+}
