@@ -3,9 +3,12 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  wantToRead: [Book!]! @relation(name: "WantedBookToUser", onDelete: CASCADE)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  wantToRead: [Book!]! @relation(name: "WantedBookToUser", onDelete: SET_NULL)
+  currentRead: [Book!]! @relation(name: "CurrentBookToUser", onDelete: SET_NULL)
+  completeRead: [Book!]! @relation(name: "ReadBookToUser", onDelete: SET_NULL)
+  reviews: [Review!]! @relation(name: "ReviewToUser", onDelete: CASCADE)
 }
 
 type Book {
@@ -15,16 +18,31 @@ type Book {
   published: String!
   genre: String!
   pages: Int
-  author: Author! @relation(name: "BookToAuthor", onDelete: SET_NULL)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  author: Author! @relation(name: "BookToAuthor", onDelete: SET_NULL)
+  wantedToRead: [User!]! @relation(name: "WantedBookToUser", onDelete: SET_NULL)
+  currentRead: [User!]! @relation(name: "CurrentBookToUser", onDelete: SET_NULL)
+  completedRead: [User!]! @relation(name: "ReadBookToUser", onDelete: SET_NULL)
+  reviews: [Review!]! @relation(name: "ReviewToBook", onDelete: CASCADE)
 }
 
 type Author {
   id: ID! @id
   name: String!
   about: String
-  books: [Book!]! @relation(name: "BookToAuthor", onDelete: CASCADE)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  books: [Book!]! @relation(name: "BookToAuthor", onDelete: SET_NULL)
+}
+
+type Review {
+  id: ID! @id
+  text: String!
+  rating: Int!
+  likes: Int
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  author: User! @relation(name: "ReviewToUser", onDelete: SET_NULL)
+  book: Book! @relation(name: "ReviewToBook", onDelete: SET_NULL)
 }

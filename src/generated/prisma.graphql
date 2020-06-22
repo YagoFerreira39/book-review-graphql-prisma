@@ -1,11 +1,15 @@
 # source: https://book-review-yfer-05143b6625.herokuapp.com/book-review-yfer/dev
-# timestamp: Fri Jun 19 2020 13:50:49 GMT-0300 (Brasilia Standard Time)
+# timestamp: Mon Jun 22 2020 18:07:05 GMT-0300 (Brasilia Standard Time)
 
 type AggregateAuthor {
   count: Int!
 }
 
 type AggregateBook {
+  count: Int!
+}
+
+type AggregateReview {
   count: Int!
 }
 
@@ -17,9 +21,9 @@ type Author implements Node {
   id: ID!
   name: String!
   about: String
-  books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
   updatedAt: DateTime!
   createdAt: DateTime!
+  books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
 }
 
 """A connection to a list of items."""
@@ -341,9 +345,13 @@ type Book implements Node {
   published: String!
   genre: String!
   pages: Int
-  author: Author!
   updatedAt: DateTime!
   createdAt: DateTime!
+  author: Author!
+  wantedToRead(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  currentRead(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  completedRead(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review!]
 }
 
 """A connection to a list of items."""
@@ -364,16 +372,35 @@ input BookCreateInput {
   genre: String!
   pages: Int
   author: AuthorCreateOneWithoutBooksInput!
-}
-
-input BookCreateManyInput {
-  create: [BookCreateInput!]
-  connect: [BookWhereUniqueInput!]
+  wantedToRead: UserCreateManyWithoutWantToReadInput
+  currentRead: UserCreateManyWithoutCurrentReadInput
+  completedRead: UserCreateManyWithoutCompleteReadInput
+  reviews: ReviewCreateManyWithoutBookInput
 }
 
 input BookCreateManyWithoutAuthorInput {
   create: [BookCreateWithoutAuthorInput!]
   connect: [BookWhereUniqueInput!]
+}
+
+input BookCreateManyWithoutCompletedReadInput {
+  create: [BookCreateWithoutCompletedReadInput!]
+  connect: [BookWhereUniqueInput!]
+}
+
+input BookCreateManyWithoutCurrentReadInput {
+  create: [BookCreateWithoutCurrentReadInput!]
+  connect: [BookWhereUniqueInput!]
+}
+
+input BookCreateManyWithoutWantedToReadInput {
+  create: [BookCreateWithoutWantedToReadInput!]
+  connect: [BookWhereUniqueInput!]
+}
+
+input BookCreateOneWithoutReviewsInput {
+  create: BookCreateWithoutReviewsInput
+  connect: BookWhereUniqueInput
 }
 
 input BookCreateWithoutAuthorInput {
@@ -383,6 +410,62 @@ input BookCreateWithoutAuthorInput {
   published: String!
   genre: String!
   pages: Int
+  wantedToRead: UserCreateManyWithoutWantToReadInput
+  currentRead: UserCreateManyWithoutCurrentReadInput
+  completedRead: UserCreateManyWithoutCompleteReadInput
+  reviews: ReviewCreateManyWithoutBookInput
+}
+
+input BookCreateWithoutCompletedReadInput {
+  id: ID
+  title: String!
+  sinopse: String
+  published: String!
+  genre: String!
+  pages: Int
+  author: AuthorCreateOneWithoutBooksInput!
+  wantedToRead: UserCreateManyWithoutWantToReadInput
+  currentRead: UserCreateManyWithoutCurrentReadInput
+  reviews: ReviewCreateManyWithoutBookInput
+}
+
+input BookCreateWithoutCurrentReadInput {
+  id: ID
+  title: String!
+  sinopse: String
+  published: String!
+  genre: String!
+  pages: Int
+  author: AuthorCreateOneWithoutBooksInput!
+  wantedToRead: UserCreateManyWithoutWantToReadInput
+  completedRead: UserCreateManyWithoutCompleteReadInput
+  reviews: ReviewCreateManyWithoutBookInput
+}
+
+input BookCreateWithoutReviewsInput {
+  id: ID
+  title: String!
+  sinopse: String
+  published: String!
+  genre: String!
+  pages: Int
+  author: AuthorCreateOneWithoutBooksInput!
+  wantedToRead: UserCreateManyWithoutWantToReadInput
+  currentRead: UserCreateManyWithoutCurrentReadInput
+  completedRead: UserCreateManyWithoutCompleteReadInput
+}
+
+input BookCreateWithoutWantedToReadInput {
+  id: ID
+  title: String!
+  sinopse: String
+  published: String!
+  genre: String!
+  pages: Int
+  author: AuthorCreateOneWithoutBooksInput!
+  currentRead: UserCreateManyWithoutCurrentReadInput
+  completedRead: UserCreateManyWithoutCompleteReadInput
+  reviews: ReviewCreateManyWithoutBookInput
 }
 
 """An edge in a connection."""
@@ -740,15 +823,6 @@ input BookSubscriptionWhereInput {
   node: BookWhereInput
 }
 
-input BookUpdateDataInput {
-  title: String
-  sinopse: String
-  published: String
-  genre: String
-  pages: Int
-  author: AuthorUpdateOneRequiredWithoutBooksInput
-}
-
 input BookUpdateInput {
   title: String
   sinopse: String
@@ -756,6 +830,10 @@ input BookUpdateInput {
   genre: String
   pages: Int
   author: AuthorUpdateOneRequiredWithoutBooksInput
+  wantedToRead: UserUpdateManyWithoutWantToReadInput
+  currentRead: UserUpdateManyWithoutCurrentReadInput
+  completedRead: UserUpdateManyWithoutCompleteReadInput
+  reviews: ReviewUpdateManyWithoutBookInput
 }
 
 input BookUpdateManyDataInput {
@@ -764,18 +842,6 @@ input BookUpdateManyDataInput {
   published: String
   genre: String
   pages: Int
-}
-
-input BookUpdateManyInput {
-  create: [BookCreateInput!]
-  connect: [BookWhereUniqueInput!]
-  set: [BookWhereUniqueInput!]
-  disconnect: [BookWhereUniqueInput!]
-  delete: [BookWhereUniqueInput!]
-  update: [BookUpdateWithWhereUniqueNestedInput!]
-  updateMany: [BookUpdateManyWithWhereNestedInput!]
-  deleteMany: [BookScalarWhereInput!]
-  upsert: [BookUpsertWithWhereUniqueNestedInput!]
 }
 
 input BookUpdateManyMutationInput {
@@ -798,9 +864,52 @@ input BookUpdateManyWithoutAuthorInput {
   upsert: [BookUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
+input BookUpdateManyWithoutCompletedReadInput {
+  create: [BookCreateWithoutCompletedReadInput!]
+  connect: [BookWhereUniqueInput!]
+  set: [BookWhereUniqueInput!]
+  disconnect: [BookWhereUniqueInput!]
+  delete: [BookWhereUniqueInput!]
+  update: [BookUpdateWithWhereUniqueWithoutCompletedReadInput!]
+  updateMany: [BookUpdateManyWithWhereNestedInput!]
+  deleteMany: [BookScalarWhereInput!]
+  upsert: [BookUpsertWithWhereUniqueWithoutCompletedReadInput!]
+}
+
+input BookUpdateManyWithoutCurrentReadInput {
+  create: [BookCreateWithoutCurrentReadInput!]
+  connect: [BookWhereUniqueInput!]
+  set: [BookWhereUniqueInput!]
+  disconnect: [BookWhereUniqueInput!]
+  delete: [BookWhereUniqueInput!]
+  update: [BookUpdateWithWhereUniqueWithoutCurrentReadInput!]
+  updateMany: [BookUpdateManyWithWhereNestedInput!]
+  deleteMany: [BookScalarWhereInput!]
+  upsert: [BookUpsertWithWhereUniqueWithoutCurrentReadInput!]
+}
+
+input BookUpdateManyWithoutWantedToReadInput {
+  create: [BookCreateWithoutWantedToReadInput!]
+  connect: [BookWhereUniqueInput!]
+  set: [BookWhereUniqueInput!]
+  disconnect: [BookWhereUniqueInput!]
+  delete: [BookWhereUniqueInput!]
+  update: [BookUpdateWithWhereUniqueWithoutWantedToReadInput!]
+  updateMany: [BookUpdateManyWithWhereNestedInput!]
+  deleteMany: [BookScalarWhereInput!]
+  upsert: [BookUpsertWithWhereUniqueWithoutWantedToReadInput!]
+}
+
 input BookUpdateManyWithWhereNestedInput {
   where: BookScalarWhereInput!
   data: BookUpdateManyDataInput!
+}
+
+input BookUpdateOneRequiredWithoutReviewsInput {
+  create: BookCreateWithoutReviewsInput
+  connect: BookWhereUniqueInput
+  update: BookUpdateWithoutReviewsDataInput
+  upsert: BookUpsertWithoutReviewsInput
 }
 
 input BookUpdateWithoutAuthorDataInput {
@@ -809,11 +918,58 @@ input BookUpdateWithoutAuthorDataInput {
   published: String
   genre: String
   pages: Int
+  wantedToRead: UserUpdateManyWithoutWantToReadInput
+  currentRead: UserUpdateManyWithoutCurrentReadInput
+  completedRead: UserUpdateManyWithoutCompleteReadInput
+  reviews: ReviewUpdateManyWithoutBookInput
 }
 
-input BookUpdateWithWhereUniqueNestedInput {
-  where: BookWhereUniqueInput!
-  data: BookUpdateDataInput!
+input BookUpdateWithoutCompletedReadDataInput {
+  title: String
+  sinopse: String
+  published: String
+  genre: String
+  pages: Int
+  author: AuthorUpdateOneRequiredWithoutBooksInput
+  wantedToRead: UserUpdateManyWithoutWantToReadInput
+  currentRead: UserUpdateManyWithoutCurrentReadInput
+  reviews: ReviewUpdateManyWithoutBookInput
+}
+
+input BookUpdateWithoutCurrentReadDataInput {
+  title: String
+  sinopse: String
+  published: String
+  genre: String
+  pages: Int
+  author: AuthorUpdateOneRequiredWithoutBooksInput
+  wantedToRead: UserUpdateManyWithoutWantToReadInput
+  completedRead: UserUpdateManyWithoutCompleteReadInput
+  reviews: ReviewUpdateManyWithoutBookInput
+}
+
+input BookUpdateWithoutReviewsDataInput {
+  title: String
+  sinopse: String
+  published: String
+  genre: String
+  pages: Int
+  author: AuthorUpdateOneRequiredWithoutBooksInput
+  wantedToRead: UserUpdateManyWithoutWantToReadInput
+  currentRead: UserUpdateManyWithoutCurrentReadInput
+  completedRead: UserUpdateManyWithoutCompleteReadInput
+}
+
+input BookUpdateWithoutWantedToReadDataInput {
+  title: String
+  sinopse: String
+  published: String
+  genre: String
+  pages: Int
+  author: AuthorUpdateOneRequiredWithoutBooksInput
+  currentRead: UserUpdateManyWithoutCurrentReadInput
+  completedRead: UserUpdateManyWithoutCompleteReadInput
+  reviews: ReviewUpdateManyWithoutBookInput
 }
 
 input BookUpdateWithWhereUniqueWithoutAuthorInput {
@@ -821,16 +977,48 @@ input BookUpdateWithWhereUniqueWithoutAuthorInput {
   data: BookUpdateWithoutAuthorDataInput!
 }
 
-input BookUpsertWithWhereUniqueNestedInput {
+input BookUpdateWithWhereUniqueWithoutCompletedReadInput {
   where: BookWhereUniqueInput!
-  update: BookUpdateDataInput!
-  create: BookCreateInput!
+  data: BookUpdateWithoutCompletedReadDataInput!
+}
+
+input BookUpdateWithWhereUniqueWithoutCurrentReadInput {
+  where: BookWhereUniqueInput!
+  data: BookUpdateWithoutCurrentReadDataInput!
+}
+
+input BookUpdateWithWhereUniqueWithoutWantedToReadInput {
+  where: BookWhereUniqueInput!
+  data: BookUpdateWithoutWantedToReadDataInput!
+}
+
+input BookUpsertWithoutReviewsInput {
+  update: BookUpdateWithoutReviewsDataInput!
+  create: BookCreateWithoutReviewsInput!
 }
 
 input BookUpsertWithWhereUniqueWithoutAuthorInput {
   where: BookWhereUniqueInput!
   update: BookUpdateWithoutAuthorDataInput!
   create: BookCreateWithoutAuthorInput!
+}
+
+input BookUpsertWithWhereUniqueWithoutCompletedReadInput {
+  where: BookWhereUniqueInput!
+  update: BookUpdateWithoutCompletedReadDataInput!
+  create: BookCreateWithoutCompletedReadInput!
+}
+
+input BookUpsertWithWhereUniqueWithoutCurrentReadInput {
+  where: BookWhereUniqueInput!
+  update: BookUpdateWithoutCurrentReadDataInput!
+  create: BookCreateWithoutCurrentReadInput!
+}
+
+input BookUpsertWithWhereUniqueWithoutWantedToReadInput {
+  where: BookWhereUniqueInput!
+  update: BookUpdateWithoutWantedToReadDataInput!
+  create: BookCreateWithoutWantedToReadInput!
 }
 
 input BookWhereInput {
@@ -1109,6 +1297,18 @@ input BookWhereInput {
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
   author: AuthorWhereInput
+  wantedToRead_every: UserWhereInput
+  wantedToRead_some: UserWhereInput
+  wantedToRead_none: UserWhereInput
+  currentRead_every: UserWhereInput
+  currentRead_some: UserWhereInput
+  currentRead_none: UserWhereInput
+  completedRead_every: UserWhereInput
+  completedRead_some: UserWhereInput
+  completedRead_none: UserWhereInput
+  reviews_every: ReviewWhereInput
+  reviews_some: ReviewWhereInput
+  reviews_none: ReviewWhereInput
 }
 
 input BookWhereUniqueInput {
@@ -1125,23 +1325,29 @@ scalar Long
 
 type Mutation {
   createUser(data: UserCreateInput!): User!
-  createAuthor(data: AuthorCreateInput!): Author!
   createBook(data: BookCreateInput!): Book!
+  createAuthor(data: AuthorCreateInput!): Author!
+  createReview(data: ReviewCreateInput!): Review!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateAuthor(data: AuthorUpdateInput!, where: AuthorWhereUniqueInput!): Author
   updateBook(data: BookUpdateInput!, where: BookWhereUniqueInput!): Book
+  updateAuthor(data: AuthorUpdateInput!, where: AuthorWhereUniqueInput!): Author
+  updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review
   deleteUser(where: UserWhereUniqueInput!): User
-  deleteAuthor(where: AuthorWhereUniqueInput!): Author
   deleteBook(where: BookWhereUniqueInput!): Book
+  deleteAuthor(where: AuthorWhereUniqueInput!): Author
+  deleteReview(where: ReviewWhereUniqueInput!): Review
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  upsertAuthor(where: AuthorWhereUniqueInput!, create: AuthorCreateInput!, update: AuthorUpdateInput!): Author!
   upsertBook(where: BookWhereUniqueInput!, create: BookCreateInput!, update: BookUpdateInput!): Book!
+  upsertAuthor(where: AuthorWhereUniqueInput!, create: AuthorCreateInput!, update: AuthorUpdateInput!): Author!
+  upsertReview(where: ReviewWhereUniqueInput!, create: ReviewCreateInput!, update: ReviewUpdateInput!): Review!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
-  updateManyAuthors(data: AuthorUpdateManyMutationInput!, where: AuthorWhereInput): BatchPayload!
   updateManyBooks(data: BookUpdateManyMutationInput!, where: BookWhereInput): BatchPayload!
+  updateManyAuthors(data: AuthorUpdateManyMutationInput!, where: AuthorWhereInput): BatchPayload!
+  updateManyReviews(data: ReviewUpdateManyMutationInput!, where: ReviewWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
-  deleteManyAuthors(where: AuthorWhereInput): BatchPayload!
   deleteManyBooks(where: BookWhereInput): BatchPayload!
+  deleteManyAuthors(where: AuthorWhereInput): BatchPayload!
+  deleteManyReviews(where: ReviewWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1173,14 +1379,17 @@ type PageInfo {
 
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  authors(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Author]!
   books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book]!
+  authors(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Author]!
+  reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review]!
   user(where: UserWhereUniqueInput!): User
-  author(where: AuthorWhereUniqueInput!): Author
   book(where: BookWhereUniqueInput!): Book
+  author(where: AuthorWhereUniqueInput!): Author
+  review(where: ReviewWhereUniqueInput!): Review
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  authorsConnection(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AuthorConnection!
   booksConnection(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BookConnection!
+  authorsConnection(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AuthorConnection!
+  reviewsConnection(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReviewConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -1189,10 +1398,588 @@ type Query {
   ): Node
 }
 
+type Review implements Node {
+  id: ID!
+  text: String!
+  rating: Int!
+  likes: Int
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  author: User!
+  book: Book!
+}
+
+"""A connection to a list of items."""
+type ReviewConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReviewEdge]!
+  aggregate: AggregateReview!
+}
+
+input ReviewCreateInput {
+  id: ID
+  text: String!
+  rating: Int!
+  likes: Int
+  author: UserCreateOneWithoutReviewsInput!
+  book: BookCreateOneWithoutReviewsInput!
+}
+
+input ReviewCreateManyWithoutAuthorInput {
+  create: [ReviewCreateWithoutAuthorInput!]
+  connect: [ReviewWhereUniqueInput!]
+}
+
+input ReviewCreateManyWithoutBookInput {
+  create: [ReviewCreateWithoutBookInput!]
+  connect: [ReviewWhereUniqueInput!]
+}
+
+input ReviewCreateWithoutAuthorInput {
+  id: ID
+  text: String!
+  rating: Int!
+  likes: Int
+  book: BookCreateOneWithoutReviewsInput!
+}
+
+input ReviewCreateWithoutBookInput {
+  id: ID
+  text: String!
+  rating: Int!
+  likes: Int
+  author: UserCreateOneWithoutReviewsInput!
+}
+
+"""An edge in a connection."""
+type ReviewEdge {
+  """The item at the end of the edge."""
+  node: Review!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ReviewOrderByInput {
+  id_ASC
+  id_DESC
+  text_ASC
+  text_DESC
+  rating_ASC
+  rating_DESC
+  likes_ASC
+  likes_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ReviewPreviousValues {
+  id: ID!
+  text: String!
+  rating: Int!
+  likes: Int
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+input ReviewScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReviewScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReviewScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReviewScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  rating: Int
+
+  """All values that are not equal to given value."""
+  rating_not: Int
+
+  """All values that are contained in given list."""
+  rating_in: [Int!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Int!]
+
+  """All values less than the given value."""
+  rating_lt: Int
+
+  """All values less than or equal the given value."""
+  rating_lte: Int
+
+  """All values greater than the given value."""
+  rating_gt: Int
+
+  """All values greater than or equal the given value."""
+  rating_gte: Int
+  likes: Int
+
+  """All values that are not equal to given value."""
+  likes_not: Int
+
+  """All values that are contained in given list."""
+  likes_in: [Int!]
+
+  """All values that are not contained in given list."""
+  likes_not_in: [Int!]
+
+  """All values less than the given value."""
+  likes_lt: Int
+
+  """All values less than or equal the given value."""
+  likes_lte: Int
+
+  """All values greater than the given value."""
+  likes_gt: Int
+
+  """All values greater than or equal the given value."""
+  likes_gte: Int
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+}
+
+type ReviewSubscriptionPayload {
+  mutation: MutationType!
+  node: Review
+  updatedFields: [String!]
+  previousValues: ReviewPreviousValues
+}
+
+input ReviewSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReviewSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReviewSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReviewSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ReviewWhereInput
+}
+
+input ReviewUpdateInput {
+  text: String
+  rating: Int
+  likes: Int
+  author: UserUpdateOneRequiredWithoutReviewsInput
+  book: BookUpdateOneRequiredWithoutReviewsInput
+}
+
+input ReviewUpdateManyDataInput {
+  text: String
+  rating: Int
+  likes: Int
+}
+
+input ReviewUpdateManyMutationInput {
+  text: String
+  rating: Int
+  likes: Int
+}
+
+input ReviewUpdateManyWithoutAuthorInput {
+  create: [ReviewCreateWithoutAuthorInput!]
+  connect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
+  disconnect: [ReviewWhereUniqueInput!]
+  delete: [ReviewWhereUniqueInput!]
+  update: [ReviewUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [ReviewUpdateManyWithWhereNestedInput!]
+  deleteMany: [ReviewScalarWhereInput!]
+  upsert: [ReviewUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input ReviewUpdateManyWithoutBookInput {
+  create: [ReviewCreateWithoutBookInput!]
+  connect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
+  disconnect: [ReviewWhereUniqueInput!]
+  delete: [ReviewWhereUniqueInput!]
+  update: [ReviewUpdateWithWhereUniqueWithoutBookInput!]
+  updateMany: [ReviewUpdateManyWithWhereNestedInput!]
+  deleteMany: [ReviewScalarWhereInput!]
+  upsert: [ReviewUpsertWithWhereUniqueWithoutBookInput!]
+}
+
+input ReviewUpdateManyWithWhereNestedInput {
+  where: ReviewScalarWhereInput!
+  data: ReviewUpdateManyDataInput!
+}
+
+input ReviewUpdateWithoutAuthorDataInput {
+  text: String
+  rating: Int
+  likes: Int
+  book: BookUpdateOneRequiredWithoutReviewsInput
+}
+
+input ReviewUpdateWithoutBookDataInput {
+  text: String
+  rating: Int
+  likes: Int
+  author: UserUpdateOneRequiredWithoutReviewsInput
+}
+
+input ReviewUpdateWithWhereUniqueWithoutAuthorInput {
+  where: ReviewWhereUniqueInput!
+  data: ReviewUpdateWithoutAuthorDataInput!
+}
+
+input ReviewUpdateWithWhereUniqueWithoutBookInput {
+  where: ReviewWhereUniqueInput!
+  data: ReviewUpdateWithoutBookDataInput!
+}
+
+input ReviewUpsertWithWhereUniqueWithoutAuthorInput {
+  where: ReviewWhereUniqueInput!
+  update: ReviewUpdateWithoutAuthorDataInput!
+  create: ReviewCreateWithoutAuthorInput!
+}
+
+input ReviewUpsertWithWhereUniqueWithoutBookInput {
+  where: ReviewWhereUniqueInput!
+  update: ReviewUpdateWithoutBookDataInput!
+  create: ReviewCreateWithoutBookInput!
+}
+
+input ReviewWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReviewWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReviewWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReviewWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  rating: Int
+
+  """All values that are not equal to given value."""
+  rating_not: Int
+
+  """All values that are contained in given list."""
+  rating_in: [Int!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Int!]
+
+  """All values less than the given value."""
+  rating_lt: Int
+
+  """All values less than or equal the given value."""
+  rating_lte: Int
+
+  """All values greater than the given value."""
+  rating_gt: Int
+
+  """All values greater than or equal the given value."""
+  rating_gte: Int
+  likes: Int
+
+  """All values that are not equal to given value."""
+  likes_not: Int
+
+  """All values that are contained in given list."""
+  likes_in: [Int!]
+
+  """All values that are not contained in given list."""
+  likes_not_in: [Int!]
+
+  """All values less than the given value."""
+  likes_lt: Int
+
+  """All values less than or equal the given value."""
+  likes_lte: Int
+
+  """All values greater than the given value."""
+  likes_gt: Int
+
+  """All values greater than or equal the given value."""
+  likes_gte: Int
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  author: UserWhereInput
+  book: BookWhereInput
+}
+
+input ReviewWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  author(where: AuthorSubscriptionWhereInput): AuthorSubscriptionPayload
   book(where: BookSubscriptionWhereInput): BookSubscriptionPayload
+  author(where: AuthorSubscriptionWhereInput): AuthorSubscriptionPayload
+  review(where: ReviewSubscriptionWhereInput): ReviewSubscriptionPayload
 }
 
 type User implements Node {
@@ -1200,9 +1987,12 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
-  wantToRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
   updatedAt: DateTime!
   createdAt: DateTime!
+  wantToRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
+  currentRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
+  completeRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
+  reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review!]
 }
 
 """A connection to a list of items."""
@@ -1220,7 +2010,70 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
-  wantToRead: BookCreateManyInput
+  wantToRead: BookCreateManyWithoutWantedToReadInput
+  currentRead: BookCreateManyWithoutCurrentReadInput
+  completeRead: BookCreateManyWithoutCompletedReadInput
+  reviews: ReviewCreateManyWithoutAuthorInput
+}
+
+input UserCreateManyWithoutCompleteReadInput {
+  create: [UserCreateWithoutCompleteReadInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutCurrentReadInput {
+  create: [UserCreateWithoutCurrentReadInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutWantToReadInput {
+  create: [UserCreateWithoutWantToReadInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneWithoutReviewsInput {
+  create: UserCreateWithoutReviewsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutCompleteReadInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  wantToRead: BookCreateManyWithoutWantedToReadInput
+  currentRead: BookCreateManyWithoutCurrentReadInput
+  reviews: ReviewCreateManyWithoutAuthorInput
+}
+
+input UserCreateWithoutCurrentReadInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  wantToRead: BookCreateManyWithoutWantedToReadInput
+  completeRead: BookCreateManyWithoutCompletedReadInput
+  reviews: ReviewCreateManyWithoutAuthorInput
+}
+
+input UserCreateWithoutReviewsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  wantToRead: BookCreateManyWithoutWantedToReadInput
+  currentRead: BookCreateManyWithoutCurrentReadInput
+  completeRead: BookCreateManyWithoutCompletedReadInput
+}
+
+input UserCreateWithoutWantToReadInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  currentRead: BookCreateManyWithoutCurrentReadInput
+  completeRead: BookCreateManyWithoutCompletedReadInput
+  reviews: ReviewCreateManyWithoutAuthorInput
 }
 
 """An edge in a connection."""
@@ -1254,6 +2107,221 @@ type UserPreviousValues {
   password: String!
   updatedAt: DateTime!
   createdAt: DateTime!
+}
+
+input UserScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
 }
 
 type UserSubscriptionPayload {
@@ -1299,13 +2367,144 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  wantToRead: BookUpdateManyInput
+  wantToRead: BookUpdateManyWithoutWantedToReadInput
+  currentRead: BookUpdateManyWithoutCurrentReadInput
+  completeRead: BookUpdateManyWithoutCompletedReadInput
+  reviews: ReviewUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
+  email: String
+  password: String
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+}
+
+input UserUpdateManyWithoutCompleteReadInput {
+  create: [UserCreateWithoutCompleteReadInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutCompleteReadInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutCompleteReadInput!]
+}
+
+input UserUpdateManyWithoutCurrentReadInput {
+  create: [UserCreateWithoutCurrentReadInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutCurrentReadInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutCurrentReadInput!]
+}
+
+input UserUpdateManyWithoutWantToReadInput {
+  create: [UserCreateWithoutWantToReadInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutWantToReadInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutWantToReadInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
+}
+
+input UserUpdateOneRequiredWithoutReviewsInput {
+  create: UserCreateWithoutReviewsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutReviewsDataInput
+  upsert: UserUpsertWithoutReviewsInput
+}
+
+input UserUpdateWithoutCompleteReadDataInput {
+  name: String
+  email: String
+  password: String
+  wantToRead: BookUpdateManyWithoutWantedToReadInput
+  currentRead: BookUpdateManyWithoutCurrentReadInput
+  reviews: ReviewUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateWithoutCurrentReadDataInput {
+  name: String
+  email: String
+  password: String
+  wantToRead: BookUpdateManyWithoutWantedToReadInput
+  completeRead: BookUpdateManyWithoutCompletedReadInput
+  reviews: ReviewUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateWithoutReviewsDataInput {
+  name: String
+  email: String
+  password: String
+  wantToRead: BookUpdateManyWithoutWantedToReadInput
+  currentRead: BookUpdateManyWithoutCurrentReadInput
+  completeRead: BookUpdateManyWithoutCompletedReadInput
+}
+
+input UserUpdateWithoutWantToReadDataInput {
+  name: String
+  email: String
+  password: String
+  currentRead: BookUpdateManyWithoutCurrentReadInput
+  completeRead: BookUpdateManyWithoutCompletedReadInput
+  reviews: ReviewUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateWithWhereUniqueWithoutCompleteReadInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutCompleteReadDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutCurrentReadInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutCurrentReadDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutWantToReadInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutWantToReadDataInput!
+}
+
+input UserUpsertWithoutReviewsInput {
+  update: UserUpdateWithoutReviewsDataInput!
+  create: UserCreateWithoutReviewsInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutCompleteReadInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutCompleteReadDataInput!
+  create: UserCreateWithoutCompleteReadInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutCurrentReadInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutCurrentReadDataInput!
+  create: UserCreateWithoutCurrentReadInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutWantToReadInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutWantToReadDataInput!
+  create: UserCreateWithoutWantToReadInput!
 }
 
 input UserWhereInput {
@@ -1524,6 +2723,15 @@ input UserWhereInput {
   wantToRead_every: BookWhereInput
   wantToRead_some: BookWhereInput
   wantToRead_none: BookWhereInput
+  currentRead_every: BookWhereInput
+  currentRead_some: BookWhereInput
+  currentRead_none: BookWhereInput
+  completeRead_every: BookWhereInput
+  completeRead_some: BookWhereInput
+  completeRead_none: BookWhereInput
+  reviews_every: ReviewWhereInput
+  reviews_some: ReviewWhereInput
+  reviews_none: ReviewWhereInput
 }
 
 input UserWhereUniqueInput {

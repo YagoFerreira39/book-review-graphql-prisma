@@ -1,20 +1,34 @@
 type Query {
-  users: [User!]!
+  user(query: String): User!
+  users(query: String): [User!]!
   books: [Book!]!
   authors: [Author!]!
   hello: String!
 }
 
 type Mutation {
+  login(data: LoginUserInput): AuthPayload!
   createUser(data: CreateUserInput): AuthPayload!
   updateUser(data: UpdateUserInput): User!
   deleteUser(id: ID!): User!
   createAuthor(data: CreateAuthorInput): Author!
-  updateAuthor(data: UpdateAuthorInput): Author!
-  deleteAuthor: Author!
+  updateAuthor(id: ID!, data: UpdateAuthorInput): Author!
+  deleteAuthor(id: ID!): Author!
   createBook(data: CreateBookInput): Book!
   updateBook(data: UpdateBookInput): Book!
-  deleteBook: Book!
+  deleteBook(id: ID!): Book!
+  createReview(data: CreateReviewInput): Review!
+  updateReview(data: UpdateReviewInput): Review!
+  deleteReview(id: ID!): Review!
+
+  wantToRead(id: ID!): User!
+  currentRead(id: ID!): User!
+  completeRead(id: ID!): User!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
 }
 
 type AuthPayload {
@@ -31,6 +45,7 @@ input UpdateUserInput {
   name: String
   email: String
   password: String
+  wantToRead: ID
 }
 
 input CreateAuthorInput {
@@ -48,6 +63,7 @@ input CreateBookInput {
   published: String!
   genre: String!
   pages: Int
+  author: ID!
 }
 input UpdateBookInput {
   title: String
@@ -57,11 +73,25 @@ input UpdateBookInput {
   pages: Int
 }
 
+input CreateReviewInput {
+  text: String!
+  rating: Int!
+  likes: Int
+}
+input UpdateReviewInput {
+  text: String
+  rating: Int
+  likes: Int
+}
+
 type User {
   id: ID!
   name: String!
   email: String!
   password: String!
+  wantToRead: [Book!]!
+  updatedAt: String!
+  createdAt: String!
 }
 
 type Book {
@@ -71,6 +101,9 @@ type Book {
   published: String!
   genre: String!
   pages: Int
+  author: Author!
+  updatedAt: String!
+  createdAt: String!
 }
 
 type Author {
@@ -78,4 +111,17 @@ type Author {
   name: String!
   about: String
   books: [Book!]!
+  updatedAt: String!
+  createdAt: String!
+}
+
+type Review {
+  id: ID!
+  text: String!
+  rating: Int!
+  likes: Int
+  author: User!
+  book: Book!
+  updatedAt: String!
+  createdAt: String!
 }
