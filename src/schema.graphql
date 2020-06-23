@@ -21,9 +21,7 @@ type Mutation {
   updateReview(data: UpdateReviewInput): Review!
   deleteReview(id: ID!): Review!
 
-  wantToRead(id: ID!): User!
-  currentRead(id: ID!): User!
-  completeRead(id: ID!): User!
+  shelfList(id: ID!, chose: String!): User!
 }
 
 input LoginUserInput {
@@ -90,6 +88,8 @@ type User {
   email: String!
   password: String!
   wantToRead: [Book!]!
+  currentRead: [Book!]!
+  completeRead: [Book!]!
   updatedAt: String!
   createdAt: String!
 }

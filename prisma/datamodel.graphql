@@ -39,7 +39,7 @@ type Author {
 type Review {
   id: ID! @id
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
