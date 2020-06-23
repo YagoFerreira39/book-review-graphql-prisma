@@ -197,35 +197,42 @@ const Mutation = {
         id: args.id,
       },
     });
-    /*if (listed) {
-      throw new Error("Already in list");
-    }*/
 
     const changeList = async (bookId) => {
-      return prisma.mutation.updateUser({
-        where: {
-          id: userId,
-        },
-        data: {
-          OR: [
-            {
-              wantToRead: {
-                disconnect: { id: bookId },
-              },
+      if (wantListed) {
+        await prisma.mutation.updateUser({
+          where: {
+            id: userId,
+          },
+          data: {
+            wantToRead: {
+              disconnect: { id: bookId },
             },
-            {
-              currentRead: {
-                disconnect: { id: bookId },
-              },
+          },
+        });
+      } else if (currentListed) {
+        await prisma.mutation.updateUser({
+          where: {
+            id: userId,
+          },
+          data: {
+            currentRead: {
+              disconnect: { id: bookId },
             },
-            {
-              completeRead: {
-                disconnect: { id: bookId },
-              },
+          },
+        });
+      } else if (completeListed) {
+        await prisma.mutation.updateUser({
+          where: {
+            id: userId,
+          },
+          data: {
+            completeRead: {
+              disconnect: { id: bookId },
             },
-          ],
-        },
-      });
+          },
+        });
+      }
     };
 
     const book = await prisma.query.books({
@@ -239,11 +246,10 @@ const Mutation = {
     }
 
     if (chose === "WantToRead") {
-      if (currentListed || completeListed) {
-        changeList(args.id);
-        console.log("Deleted and updated");
-      } else if (wantListed) {
+      if (wantListed) {
         throw new Error("Already in list");
+      } else if (currentListed || completeListed) {
+        changeList(args.id);
       }
       return prisma.mutation.updateUser(
         {
@@ -261,11 +267,10 @@ const Mutation = {
         info
       );
     } else if (chose === "CurrentRead") {
-      if (wantListed || completeListed) {
-        changeList(args.id);
-        console.log("Deleted and updated");
-      } else if (currentListed) {
+      if (currentListed) {
         throw new Error("Already in list");
+      } else if (completeListed || wantListed) {
+        changeList(args.id);
       }
       return prisma.mutation.updateUser(
         {
@@ -283,11 +288,10 @@ const Mutation = {
         info
       );
     } else if (chose === "CompleteRead") {
-      if (currentListed || wantListed) {
-        changeList(args.id);
-        console.log("Deleted and updated");
-      } else if (completeListed) {
+      if (completeListed) {
         throw new Error("Already in list");
+      } else if (wantListed || currentListed) {
+        changeList(args.id);
       }
       return prisma.mutation.updateUser(
         {
