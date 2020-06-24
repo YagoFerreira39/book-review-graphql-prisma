@@ -4,6 +4,7 @@ import getUserId from "../utils/getUserId";
 import bcrypt from "bcryptjs";
 
 const Mutation = {
+  /**User Mutation */
   async login(parent, args, { prisma }, info) {
     const user = await prisma.query.user({
       where: {
@@ -85,6 +86,7 @@ const Mutation = {
     );
   },
 
+  /**Author Mutation */
   async createAuthor(parent, args, { prisma }, info) {
     return prisma.mutation.createAuthor(
       {
@@ -124,6 +126,7 @@ const Mutation = {
     );
   },
 
+  /**Book Mutation */
   async createBook(parent, args, { prisma }, info) {
     return prisma.mutation.createBook(
       {
@@ -171,6 +174,63 @@ const Mutation = {
     );
   },
 
+  /**Group Mutation */
+  async createGroup(parent, args, { prisma, request }, info) {
+    const adminId = getUserId(request);
+
+    const newGroup = await prisma.mutation.createGroup(
+      {
+        data: {
+          name: args.data.name,
+          description: args.data.description,
+          imageFile: args.data.imageFile,
+          admin: {
+            connect: {
+              id: adminId,
+            },
+          },
+          members: {
+            connect: {
+              id: adminId,
+            },
+          },
+        },
+      },
+      info
+    );
+    await prisma.mutation.updateUser({
+      where: { id: adminId },
+      data: {
+        groups: {
+          connect: {
+            id: newGroup.id,
+          },
+        },
+      },
+    });
+
+    return newGroup;
+  },
+
+  async deleteGroup(parent, args, { prisma, request }, info) {
+    const adminId = getUserId(request);
+    const groupExists = await prisma.exists.Group({ id: args.groupId });
+
+    if (!groupExists) {
+      throw new Error("Group cannot be found.");
+    }
+
+    return prisma.mutation.deleteGroup(
+      {
+        where: {
+          id: args.groupId,
+        },
+      },
+      info
+    );
+  },
+
+  /**Shelf Mutation */
   async shelfList(parent, args, { prisma, request }, info) {
     const userId = getUserId(request);
     const chose = args.chose;

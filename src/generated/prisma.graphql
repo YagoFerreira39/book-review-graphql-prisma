@@ -1,5 +1,5 @@
 # source: https://book-review-yfer-05143b6625.herokuapp.com/book-review-yfer/dev
-# timestamp: Wed Jun 24 2020 13:19:37 GMT-0300 (Brasilia Standard Time)
+# timestamp: Wed Jun 24 2020 18:26:31 GMT-0300 (Brasilia Standard Time)
 
 type AggregateAuthor {
   count: Int!
@@ -1013,9 +1013,11 @@ input BookUpdateManyWithWhereNestedInput {
   data: BookUpdateManyDataInput!
 }
 
-input BookUpdateOneRequiredInput {
+input BookUpdateOneInput {
   create: BookCreateInput
   connect: BookWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
   update: BookUpdateDataInput
   upsert: BookUpsertNestedInput
 }
@@ -1460,7 +1462,7 @@ type Group implements Node {
   imageFile: String
   admin(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   members(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-  currentRead: Book!
+  currentRead: Book
   completedRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
   nextRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
 }
@@ -1482,7 +1484,7 @@ input GroupCreateInput {
   imageFile: String
   admin: UserCreateManyInput
   members: UserCreateManyWithoutGroupsInput
-  currentRead: BookCreateOneInput!
+  currentRead: BookCreateOneInput
   completedRead: BookCreateManyInput
   nextRead: BookCreateManyInput
 }
@@ -1498,7 +1500,7 @@ input GroupCreateWithoutMembersInput {
   description: String
   imageFile: String
   admin: UserCreateManyInput
-  currentRead: BookCreateOneInput!
+  currentRead: BookCreateOneInput
   completedRead: BookCreateManyInput
   nextRead: BookCreateManyInput
 }
@@ -1746,7 +1748,7 @@ input GroupUpdateInput {
   imageFile: String
   admin: UserUpdateManyInput
   members: UserUpdateManyWithoutGroupsInput
-  currentRead: BookUpdateOneRequiredInput
+  currentRead: BookUpdateOneInput
   completedRead: BookUpdateManyInput
   nextRead: BookUpdateManyInput
 }
@@ -1785,7 +1787,7 @@ input GroupUpdateWithoutMembersDataInput {
   description: String
   imageFile: String
   admin: UserUpdateManyInput
-  currentRead: BookUpdateOneRequiredInput
+  currentRead: BookUpdateOneInput
   completedRead: BookUpdateManyInput
   nextRead: BookUpdateManyInput
 }

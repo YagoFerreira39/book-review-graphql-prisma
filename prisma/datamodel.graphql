@@ -58,9 +58,9 @@ type Group {
   description: String
   imageFile: String
   admin: [User!]! @relation(name: "GroupAdminToUser", onDelete: SET_NULL)
-  members: [User!]! @relation(name: "GroupMemberToUser", onDelete: SET_NULL)
-  currentRead: Book! @relation(name: "CurrentBookToGroup", onDelete: SET_NULL)
-  completedRead: [Book!]!
+  members: [User!] @relation(name: "GroupMemberToUser", onDelete: SET_NULL)
+  currentRead: Book @relation(name: "CurrentBookToGroup", onDelete: SET_NULL)
+  completedRead: [Book!]
     @relation(name: "CompletedBookToGroup", onDelete: SET_NULL)
-  nextRead: [Book!]! @relation(name: "NextBookToGroup", onDelete: SET_NULL)
+  nextRead: [Book!] @relation(name: "NextBookToGroup", onDelete: SET_NULL)
 }

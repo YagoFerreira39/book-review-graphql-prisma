@@ -1,3 +1,3 @@
 const Author = {};
 
-export { author as default };
+export { Author as default };

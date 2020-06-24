@@ -158,9 +158,9 @@ type Group {
   name: String!
   description: String
   imageFile: String
-  admin: User!
-  members: User!
-  currentRead: Book!
-  completedRead: [Book!]!
-  nextRead: [Book!]!
+  admin: [User!]!
+  members: [User!]
+  currentRead: Book
+  completedRead: [Book!]
+  nextRead: [Book!]
 }
