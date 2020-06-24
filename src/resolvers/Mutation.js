@@ -79,7 +79,7 @@ const Mutation = {
         where: {
           id: userId,
         },
-        data: data.args,
+        data: args.data,
       },
       info
     );

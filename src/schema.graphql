@@ -3,6 +3,8 @@ type Query {
   users(query: String): [User!]!
   books: [Book!]!
   authors: [Author!]!
+  reviews: [Review!]!
+  groups: [Group!]!
   hello: String!
 }
 
@@ -10,16 +12,19 @@ type Mutation {
   login(data: LoginUserInput): AuthPayload!
   createUser(data: CreateUserInput): AuthPayload!
   updateUser(data: UpdateUserInput): User!
-  deleteUser(id: ID!): User!
+  deleteUser(userId: ID!): User!
   createAuthor(data: CreateAuthorInput): Author!
   updateAuthor(id: ID!, data: UpdateAuthorInput): Author!
-  deleteAuthor(id: ID!): Author!
+  deleteAuthor(authorId: ID!): Author!
   createBook(data: CreateBookInput): Book!
   updateBook(data: UpdateBookInput): Book!
-  deleteBook(id: ID!): Book!
+  deleteBook(bookId: ID!): Book!
   createReview(data: CreateReviewInput): Review!
   updateReview(data: UpdateReviewInput): Review!
-  deleteReview(id: ID!): Review!
+  deleteReview(reviewId: ID!): Review!
+  createGroup(data: CreateGroupInput): Group!
+  updateGroup(data: UpdateGroupInput): Group!
+  deleteGroup(groupId: ID!): Group!
 
   shelfList(id: ID!, chose: String!): User!
 }
@@ -38,21 +43,24 @@ input CreateUserInput {
   name: String!
   email: String!
   password: String!
+  imageFile: String
 }
 input UpdateUserInput {
   name: String
   email: String
   password: String
-  wantToRead: ID
+  imageFile: String
 }
 
 input CreateAuthorInput {
   name: String!
   about: String
+  imageFile: String
 }
 input UpdateAuthorInput {
   name: String
   about: String
+  imageFile: String
 }
 
 input CreateBookInput {
@@ -62,6 +70,7 @@ input CreateBookInput {
   genre: String!
   pages: Int
   author: ID!
+  imageFile: [String]
 }
 input UpdateBookInput {
   title: String
@@ -69,6 +78,7 @@ input UpdateBookInput {
   published: String
   genre: String
   pages: Int
+  imageFile: [String]
 }
 
 input CreateReviewInput {
@@ -82,14 +92,28 @@ input UpdateReviewInput {
   likes: Int
 }
 
+input CreateGroupInput {
+  name: String!
+  description: String
+  imageFile: [String]
+}
+input UpdateGroupInput {
+  name: String!
+  description: String
+  imageFile: [String]
+}
+
 type User {
   id: ID!
   name: String!
   email: String!
   password: String!
+  imageFile: String
   wantToRead: [Book!]!
   currentRead: [Book!]!
   completeRead: [Book!]!
+  reviews: [Review!]!
+  groups: [Group!]!
   updatedAt: String!
   createdAt: String!
 }
@@ -127,4 +151,16 @@ type Review {
   book: Book!
   updatedAt: String!
   createdAt: String!
+}
+
+type Group {
+  id: ID!
+  name: String!
+  description: String
+  imageFile: String
+  admin: User!
+  members: User!
+  currentRead: Book!
+  completedRead: [Book!]!
+  nextRead: [Book!]!
 }
