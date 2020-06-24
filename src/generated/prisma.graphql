@@ -1,11 +1,15 @@
 # source: https://book-review-yfer-05143b6625.herokuapp.com/book-review-yfer/dev
-# timestamp: Mon Jun 22 2020 18:07:05 GMT-0300 (Brasilia Standard Time)
+# timestamp: Wed Jun 24 2020 13:19:37 GMT-0300 (Brasilia Standard Time)
 
 type AggregateAuthor {
   count: Int!
 }
 
 type AggregateBook {
+  count: Int!
+}
+
+type AggregateGroup {
   count: Int!
 }
 
@@ -21,6 +25,7 @@ type Author implements Node {
   id: ID!
   name: String!
   about: String
+  imageFile: String
   updatedAt: DateTime!
   createdAt: DateTime!
   books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
@@ -40,6 +45,7 @@ input AuthorCreateInput {
   id: ID
   name: String!
   about: String
+  imageFile: String
   books: BookCreateManyWithoutAuthorInput
 }
 
@@ -52,6 +58,7 @@ input AuthorCreateWithoutBooksInput {
   id: ID
   name: String!
   about: String
+  imageFile: String
 }
 
 """An edge in a connection."""
@@ -70,6 +77,8 @@ enum AuthorOrderByInput {
   name_DESC
   about_ASC
   about_DESC
+  imageFile_ASC
+  imageFile_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -80,6 +89,7 @@ type AuthorPreviousValues {
   id: ID!
   name: String!
   about: String
+  imageFile: String
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -126,12 +136,14 @@ input AuthorSubscriptionWhereInput {
 input AuthorUpdateInput {
   name: String
   about: String
+  imageFile: String
   books: BookUpdateManyWithoutAuthorInput
 }
 
 input AuthorUpdateManyMutationInput {
   name: String
   about: String
+  imageFile: String
 }
 
 input AuthorUpdateOneRequiredWithoutBooksInput {
@@ -144,6 +156,7 @@ input AuthorUpdateOneRequiredWithoutBooksInput {
 input AuthorUpdateWithoutBooksDataInput {
   name: String
   about: String
+  imageFile: String
 }
 
 input AuthorUpsertWithoutBooksInput {
@@ -280,6 +293,46 @@ input AuthorWhereInput {
 
   """All values not ending with the given string."""
   about_not_ends_with: String
+  imageFile: String
+
+  """All values that are not equal to given value."""
+  imageFile_not: String
+
+  """All values that are contained in given list."""
+  imageFile_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageFile_not_in: [String!]
+
+  """All values less than the given value."""
+  imageFile_lt: String
+
+  """All values less than or equal the given value."""
+  imageFile_lte: String
+
+  """All values greater than the given value."""
+  imageFile_gt: String
+
+  """All values greater than or equal the given value."""
+  imageFile_gte: String
+
+  """All values containing the given string."""
+  imageFile_contains: String
+
+  """All values not containing the given string."""
+  imageFile_not_contains: String
+
+  """All values starting with the given string."""
+  imageFile_starts_with: String
+
+  """All values not starting with the given string."""
+  imageFile_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageFile_ends_with: String
+
+  """All values not ending with the given string."""
+  imageFile_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -345,6 +398,7 @@ type Book implements Node {
   published: String!
   genre: String!
   pages: Int
+  imageFile: [String!]!
   updatedAt: DateTime!
   createdAt: DateTime!
   author: Author!
@@ -364,6 +418,10 @@ type BookConnection {
   aggregate: AggregateBook!
 }
 
+input BookCreateimageFileInput {
+  set: [String!]
+}
+
 input BookCreateInput {
   id: ID
   title: String!
@@ -371,11 +429,17 @@ input BookCreateInput {
   published: String!
   genre: String!
   pages: Int
+  imageFile: BookCreateimageFileInput
   author: AuthorCreateOneWithoutBooksInput!
   wantedToRead: UserCreateManyWithoutWantToReadInput
   currentRead: UserCreateManyWithoutCurrentReadInput
   completedRead: UserCreateManyWithoutCompleteReadInput
   reviews: ReviewCreateManyWithoutBookInput
+}
+
+input BookCreateManyInput {
+  create: [BookCreateInput!]
+  connect: [BookWhereUniqueInput!]
 }
 
 input BookCreateManyWithoutAuthorInput {
@@ -398,6 +462,11 @@ input BookCreateManyWithoutWantedToReadInput {
   connect: [BookWhereUniqueInput!]
 }
 
+input BookCreateOneInput {
+  create: BookCreateInput
+  connect: BookWhereUniqueInput
+}
+
 input BookCreateOneWithoutReviewsInput {
   create: BookCreateWithoutReviewsInput
   connect: BookWhereUniqueInput
@@ -410,6 +479,7 @@ input BookCreateWithoutAuthorInput {
   published: String!
   genre: String!
   pages: Int
+  imageFile: BookCreateimageFileInput
   wantedToRead: UserCreateManyWithoutWantToReadInput
   currentRead: UserCreateManyWithoutCurrentReadInput
   completedRead: UserCreateManyWithoutCompleteReadInput
@@ -423,6 +493,7 @@ input BookCreateWithoutCompletedReadInput {
   published: String!
   genre: String!
   pages: Int
+  imageFile: BookCreateimageFileInput
   author: AuthorCreateOneWithoutBooksInput!
   wantedToRead: UserCreateManyWithoutWantToReadInput
   currentRead: UserCreateManyWithoutCurrentReadInput
@@ -436,6 +507,7 @@ input BookCreateWithoutCurrentReadInput {
   published: String!
   genre: String!
   pages: Int
+  imageFile: BookCreateimageFileInput
   author: AuthorCreateOneWithoutBooksInput!
   wantedToRead: UserCreateManyWithoutWantToReadInput
   completedRead: UserCreateManyWithoutCompleteReadInput
@@ -449,6 +521,7 @@ input BookCreateWithoutReviewsInput {
   published: String!
   genre: String!
   pages: Int
+  imageFile: BookCreateimageFileInput
   author: AuthorCreateOneWithoutBooksInput!
   wantedToRead: UserCreateManyWithoutWantToReadInput
   currentRead: UserCreateManyWithoutCurrentReadInput
@@ -462,6 +535,7 @@ input BookCreateWithoutWantedToReadInput {
   published: String!
   genre: String!
   pages: Int
+  imageFile: BookCreateimageFileInput
   author: AuthorCreateOneWithoutBooksInput!
   currentRead: UserCreateManyWithoutCurrentReadInput
   completedRead: UserCreateManyWithoutCompleteReadInput
@@ -503,6 +577,7 @@ type BookPreviousValues {
   published: String!
   genre: String!
   pages: Int
+  imageFile: [String!]!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -823,12 +898,31 @@ input BookSubscriptionWhereInput {
   node: BookWhereInput
 }
 
+input BookUpdateDataInput {
+  title: String
+  sinopse: String
+  published: String
+  genre: String
+  pages: Int
+  imageFile: BookUpdateimageFileInput
+  author: AuthorUpdateOneRequiredWithoutBooksInput
+  wantedToRead: UserUpdateManyWithoutWantToReadInput
+  currentRead: UserUpdateManyWithoutCurrentReadInput
+  completedRead: UserUpdateManyWithoutCompleteReadInput
+  reviews: ReviewUpdateManyWithoutBookInput
+}
+
+input BookUpdateimageFileInput {
+  set: [String!]
+}
+
 input BookUpdateInput {
   title: String
   sinopse: String
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
   author: AuthorUpdateOneRequiredWithoutBooksInput
   wantedToRead: UserUpdateManyWithoutWantToReadInput
   currentRead: UserUpdateManyWithoutCurrentReadInput
@@ -842,6 +936,19 @@ input BookUpdateManyDataInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
+}
+
+input BookUpdateManyInput {
+  create: [BookCreateInput!]
+  connect: [BookWhereUniqueInput!]
+  set: [BookWhereUniqueInput!]
+  disconnect: [BookWhereUniqueInput!]
+  delete: [BookWhereUniqueInput!]
+  update: [BookUpdateWithWhereUniqueNestedInput!]
+  updateMany: [BookUpdateManyWithWhereNestedInput!]
+  deleteMany: [BookScalarWhereInput!]
+  upsert: [BookUpsertWithWhereUniqueNestedInput!]
 }
 
 input BookUpdateManyMutationInput {
@@ -850,6 +957,7 @@ input BookUpdateManyMutationInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
 }
 
 input BookUpdateManyWithoutAuthorInput {
@@ -905,6 +1013,13 @@ input BookUpdateManyWithWhereNestedInput {
   data: BookUpdateManyDataInput!
 }
 
+input BookUpdateOneRequiredInput {
+  create: BookCreateInput
+  connect: BookWhereUniqueInput
+  update: BookUpdateDataInput
+  upsert: BookUpsertNestedInput
+}
+
 input BookUpdateOneRequiredWithoutReviewsInput {
   create: BookCreateWithoutReviewsInput
   connect: BookWhereUniqueInput
@@ -918,6 +1033,7 @@ input BookUpdateWithoutAuthorDataInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
   wantedToRead: UserUpdateManyWithoutWantToReadInput
   currentRead: UserUpdateManyWithoutCurrentReadInput
   completedRead: UserUpdateManyWithoutCompleteReadInput
@@ -930,6 +1046,7 @@ input BookUpdateWithoutCompletedReadDataInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
   author: AuthorUpdateOneRequiredWithoutBooksInput
   wantedToRead: UserUpdateManyWithoutWantToReadInput
   currentRead: UserUpdateManyWithoutCurrentReadInput
@@ -942,6 +1059,7 @@ input BookUpdateWithoutCurrentReadDataInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
   author: AuthorUpdateOneRequiredWithoutBooksInput
   wantedToRead: UserUpdateManyWithoutWantToReadInput
   completedRead: UserUpdateManyWithoutCompleteReadInput
@@ -954,6 +1072,7 @@ input BookUpdateWithoutReviewsDataInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
   author: AuthorUpdateOneRequiredWithoutBooksInput
   wantedToRead: UserUpdateManyWithoutWantToReadInput
   currentRead: UserUpdateManyWithoutCurrentReadInput
@@ -966,10 +1085,16 @@ input BookUpdateWithoutWantedToReadDataInput {
   published: String
   genre: String
   pages: Int
+  imageFile: BookUpdateimageFileInput
   author: AuthorUpdateOneRequiredWithoutBooksInput
   currentRead: UserUpdateManyWithoutCurrentReadInput
   completedRead: UserUpdateManyWithoutCompleteReadInput
   reviews: ReviewUpdateManyWithoutBookInput
+}
+
+input BookUpdateWithWhereUniqueNestedInput {
+  where: BookWhereUniqueInput!
+  data: BookUpdateDataInput!
 }
 
 input BookUpdateWithWhereUniqueWithoutAuthorInput {
@@ -992,9 +1117,20 @@ input BookUpdateWithWhereUniqueWithoutWantedToReadInput {
   data: BookUpdateWithoutWantedToReadDataInput!
 }
 
+input BookUpsertNestedInput {
+  update: BookUpdateDataInput!
+  create: BookCreateInput!
+}
+
 input BookUpsertWithoutReviewsInput {
   update: BookUpdateWithoutReviewsDataInput!
   create: BookCreateWithoutReviewsInput!
+}
+
+input BookUpsertWithWhereUniqueNestedInput {
+  where: BookWhereUniqueInput!
+  update: BookUpdateDataInput!
+  create: BookCreateInput!
 }
 
 input BookUpsertWithWhereUniqueWithoutAuthorInput {
@@ -1317,6 +1453,542 @@ input BookWhereUniqueInput {
 
 scalar DateTime
 
+type Group implements Node {
+  id: ID!
+  name: String!
+  description: String
+  imageFile: String
+  admin(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  members(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  currentRead: Book!
+  completedRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
+  nextRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
+}
+
+"""A connection to a list of items."""
+type GroupConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [GroupEdge]!
+  aggregate: AggregateGroup!
+}
+
+input GroupCreateInput {
+  id: ID
+  name: String!
+  description: String
+  imageFile: String
+  admin: UserCreateManyInput
+  members: UserCreateManyWithoutGroupsInput
+  currentRead: BookCreateOneInput!
+  completedRead: BookCreateManyInput
+  nextRead: BookCreateManyInput
+}
+
+input GroupCreateManyWithoutMembersInput {
+  create: [GroupCreateWithoutMembersInput!]
+  connect: [GroupWhereUniqueInput!]
+}
+
+input GroupCreateWithoutMembersInput {
+  id: ID
+  name: String!
+  description: String
+  imageFile: String
+  admin: UserCreateManyInput
+  currentRead: BookCreateOneInput!
+  completedRead: BookCreateManyInput
+  nextRead: BookCreateManyInput
+}
+
+"""An edge in a connection."""
+type GroupEdge {
+  """The item at the end of the edge."""
+  node: Group!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum GroupOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  imageFile_ASC
+  imageFile_DESC
+}
+
+type GroupPreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  imageFile: String
+}
+
+input GroupScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [GroupScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [GroupScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [GroupScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  imageFile: String
+
+  """All values that are not equal to given value."""
+  imageFile_not: String
+
+  """All values that are contained in given list."""
+  imageFile_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageFile_not_in: [String!]
+
+  """All values less than the given value."""
+  imageFile_lt: String
+
+  """All values less than or equal the given value."""
+  imageFile_lte: String
+
+  """All values greater than the given value."""
+  imageFile_gt: String
+
+  """All values greater than or equal the given value."""
+  imageFile_gte: String
+
+  """All values containing the given string."""
+  imageFile_contains: String
+
+  """All values not containing the given string."""
+  imageFile_not_contains: String
+
+  """All values starting with the given string."""
+  imageFile_starts_with: String
+
+  """All values not starting with the given string."""
+  imageFile_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageFile_ends_with: String
+
+  """All values not ending with the given string."""
+  imageFile_not_ends_with: String
+}
+
+type GroupSubscriptionPayload {
+  mutation: MutationType!
+  node: Group
+  updatedFields: [String!]
+  previousValues: GroupPreviousValues
+}
+
+input GroupSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [GroupSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [GroupSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [GroupSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: GroupWhereInput
+}
+
+input GroupUpdateInput {
+  name: String
+  description: String
+  imageFile: String
+  admin: UserUpdateManyInput
+  members: UserUpdateManyWithoutGroupsInput
+  currentRead: BookUpdateOneRequiredInput
+  completedRead: BookUpdateManyInput
+  nextRead: BookUpdateManyInput
+}
+
+input GroupUpdateManyDataInput {
+  name: String
+  description: String
+  imageFile: String
+}
+
+input GroupUpdateManyMutationInput {
+  name: String
+  description: String
+  imageFile: String
+}
+
+input GroupUpdateManyWithoutMembersInput {
+  create: [GroupCreateWithoutMembersInput!]
+  connect: [GroupWhereUniqueInput!]
+  set: [GroupWhereUniqueInput!]
+  disconnect: [GroupWhereUniqueInput!]
+  delete: [GroupWhereUniqueInput!]
+  update: [GroupUpdateWithWhereUniqueWithoutMembersInput!]
+  updateMany: [GroupUpdateManyWithWhereNestedInput!]
+  deleteMany: [GroupScalarWhereInput!]
+  upsert: [GroupUpsertWithWhereUniqueWithoutMembersInput!]
+}
+
+input GroupUpdateManyWithWhereNestedInput {
+  where: GroupScalarWhereInput!
+  data: GroupUpdateManyDataInput!
+}
+
+input GroupUpdateWithoutMembersDataInput {
+  name: String
+  description: String
+  imageFile: String
+  admin: UserUpdateManyInput
+  currentRead: BookUpdateOneRequiredInput
+  completedRead: BookUpdateManyInput
+  nextRead: BookUpdateManyInput
+}
+
+input GroupUpdateWithWhereUniqueWithoutMembersInput {
+  where: GroupWhereUniqueInput!
+  data: GroupUpdateWithoutMembersDataInput!
+}
+
+input GroupUpsertWithWhereUniqueWithoutMembersInput {
+  where: GroupWhereUniqueInput!
+  update: GroupUpdateWithoutMembersDataInput!
+  create: GroupCreateWithoutMembersInput!
+}
+
+input GroupWhereInput {
+  """Logical AND on all given filters."""
+  AND: [GroupWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [GroupWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [GroupWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  imageFile: String
+
+  """All values that are not equal to given value."""
+  imageFile_not: String
+
+  """All values that are contained in given list."""
+  imageFile_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageFile_not_in: [String!]
+
+  """All values less than the given value."""
+  imageFile_lt: String
+
+  """All values less than or equal the given value."""
+  imageFile_lte: String
+
+  """All values greater than the given value."""
+  imageFile_gt: String
+
+  """All values greater than or equal the given value."""
+  imageFile_gte: String
+
+  """All values containing the given string."""
+  imageFile_contains: String
+
+  """All values not containing the given string."""
+  imageFile_not_contains: String
+
+  """All values starting with the given string."""
+  imageFile_starts_with: String
+
+  """All values not starting with the given string."""
+  imageFile_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageFile_ends_with: String
+
+  """All values not ending with the given string."""
+  imageFile_not_ends_with: String
+  admin_every: UserWhereInput
+  admin_some: UserWhereInput
+  admin_none: UserWhereInput
+  members_every: UserWhereInput
+  members_some: UserWhereInput
+  members_none: UserWhereInput
+  currentRead: BookWhereInput
+  completedRead_every: BookWhereInput
+  completedRead_some: BookWhereInput
+  completedRead_none: BookWhereInput
+  nextRead_every: BookWhereInput
+  nextRead_some: BookWhereInput
+  nextRead_none: BookWhereInput
+}
+
+input GroupWhereUniqueInput {
+  id: ID
+}
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -1324,30 +1996,36 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createUser(data: UserCreateInput!): User!
-  createBook(data: BookCreateInput!): Book!
   createAuthor(data: AuthorCreateInput!): Author!
   createReview(data: ReviewCreateInput!): Review!
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateBook(data: BookUpdateInput!, where: BookWhereUniqueInput!): Book
+  createGroup(data: GroupCreateInput!): Group!
+  createBook(data: BookCreateInput!): Book!
+  createUser(data: UserCreateInput!): User!
   updateAuthor(data: AuthorUpdateInput!, where: AuthorWhereUniqueInput!): Author
   updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review
-  deleteUser(where: UserWhereUniqueInput!): User
-  deleteBook(where: BookWhereUniqueInput!): Book
+  updateGroup(data: GroupUpdateInput!, where: GroupWhereUniqueInput!): Group
+  updateBook(data: BookUpdateInput!, where: BookWhereUniqueInput!): Book
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteAuthor(where: AuthorWhereUniqueInput!): Author
   deleteReview(where: ReviewWhereUniqueInput!): Review
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  upsertBook(where: BookWhereUniqueInput!, create: BookCreateInput!, update: BookUpdateInput!): Book!
+  deleteGroup(where: GroupWhereUniqueInput!): Group
+  deleteBook(where: BookWhereUniqueInput!): Book
+  deleteUser(where: UserWhereUniqueInput!): User
   upsertAuthor(where: AuthorWhereUniqueInput!, create: AuthorCreateInput!, update: AuthorUpdateInput!): Author!
   upsertReview(where: ReviewWhereUniqueInput!, create: ReviewCreateInput!, update: ReviewUpdateInput!): Review!
-  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
-  updateManyBooks(data: BookUpdateManyMutationInput!, where: BookWhereInput): BatchPayload!
+  upsertGroup(where: GroupWhereUniqueInput!, create: GroupCreateInput!, update: GroupUpdateInput!): Group!
+  upsertBook(where: BookWhereUniqueInput!, create: BookCreateInput!, update: BookUpdateInput!): Book!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyAuthors(data: AuthorUpdateManyMutationInput!, where: AuthorWhereInput): BatchPayload!
   updateManyReviews(data: ReviewUpdateManyMutationInput!, where: ReviewWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
-  deleteManyBooks(where: BookWhereInput): BatchPayload!
+  updateManyGroups(data: GroupUpdateManyMutationInput!, where: GroupWhereInput): BatchPayload!
+  updateManyBooks(data: BookUpdateManyMutationInput!, where: BookWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   deleteManyAuthors(where: AuthorWhereInput): BatchPayload!
   deleteManyReviews(where: ReviewWhereInput): BatchPayload!
+  deleteManyGroups(where: GroupWhereInput): BatchPayload!
+  deleteManyBooks(where: BookWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1378,18 +2056,21 @@ type PageInfo {
 }
 
 type Query {
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book]!
   authors(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Author]!
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review]!
-  user(where: UserWhereUniqueInput!): User
-  book(where: BookWhereUniqueInput!): Book
+  groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group]!
+  books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   author(where: AuthorWhereUniqueInput!): Author
   review(where: ReviewWhereUniqueInput!): Review
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  booksConnection(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BookConnection!
+  group(where: GroupWhereUniqueInput!): Group
+  book(where: BookWhereUniqueInput!): Book
+  user(where: UserWhereUniqueInput!): User
   authorsConnection(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AuthorConnection!
   reviewsConnection(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReviewConnection!
+  groupsConnection(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GroupConnection!
+  booksConnection(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BookConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -1401,8 +2082,9 @@ type Query {
 type Review implements Node {
   id: ID!
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
+  imageFile: [String!]!
   updatedAt: DateTime!
   createdAt: DateTime!
   author: User!
@@ -1419,11 +2101,16 @@ type ReviewConnection {
   aggregate: AggregateReview!
 }
 
+input ReviewCreateimageFileInput {
+  set: [String!]
+}
+
 input ReviewCreateInput {
   id: ID
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
+  imageFile: ReviewCreateimageFileInput
   author: UserCreateOneWithoutReviewsInput!
   book: BookCreateOneWithoutReviewsInput!
 }
@@ -1441,16 +2128,18 @@ input ReviewCreateManyWithoutBookInput {
 input ReviewCreateWithoutAuthorInput {
   id: ID
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
+  imageFile: ReviewCreateimageFileInput
   book: BookCreateOneWithoutReviewsInput!
 }
 
 input ReviewCreateWithoutBookInput {
   id: ID
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
+  imageFile: ReviewCreateimageFileInput
   author: UserCreateOneWithoutReviewsInput!
 }
 
@@ -1481,8 +2170,9 @@ enum ReviewOrderByInput {
 type ReviewPreviousValues {
   id: ID!
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
+  imageFile: [String!]!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -1576,28 +2266,28 @@ input ReviewScalarWhereInput {
 
   """All values not ending with the given string."""
   text_not_ends_with: String
-  rating: Int
+  rating: Float
 
   """All values that are not equal to given value."""
-  rating_not: Int
+  rating_not: Float
 
   """All values that are contained in given list."""
-  rating_in: [Int!]
+  rating_in: [Float!]
 
   """All values that are not contained in given list."""
-  rating_not_in: [Int!]
+  rating_not_in: [Float!]
 
   """All values less than the given value."""
-  rating_lt: Int
+  rating_lt: Float
 
   """All values less than or equal the given value."""
-  rating_lte: Int
+  rating_lte: Float
 
   """All values greater than the given value."""
-  rating_gt: Int
+  rating_gt: Float
 
   """All values greater than or equal the given value."""
-  rating_gte: Int
+  rating_gte: Float
   likes: Int
 
   """All values that are not equal to given value."""
@@ -1705,24 +2395,31 @@ input ReviewSubscriptionWhereInput {
   node: ReviewWhereInput
 }
 
+input ReviewUpdateimageFileInput {
+  set: [String!]
+}
+
 input ReviewUpdateInput {
   text: String
-  rating: Int
+  rating: Float
   likes: Int
+  imageFile: ReviewUpdateimageFileInput
   author: UserUpdateOneRequiredWithoutReviewsInput
   book: BookUpdateOneRequiredWithoutReviewsInput
 }
 
 input ReviewUpdateManyDataInput {
   text: String
-  rating: Int
+  rating: Float
   likes: Int
+  imageFile: ReviewUpdateimageFileInput
 }
 
 input ReviewUpdateManyMutationInput {
   text: String
-  rating: Int
+  rating: Float
   likes: Int
+  imageFile: ReviewUpdateimageFileInput
 }
 
 input ReviewUpdateManyWithoutAuthorInput {
@@ -1756,15 +2453,17 @@ input ReviewUpdateManyWithWhereNestedInput {
 
 input ReviewUpdateWithoutAuthorDataInput {
   text: String
-  rating: Int
+  rating: Float
   likes: Int
+  imageFile: ReviewUpdateimageFileInput
   book: BookUpdateOneRequiredWithoutReviewsInput
 }
 
 input ReviewUpdateWithoutBookDataInput {
   text: String
-  rating: Int
+  rating: Float
   likes: Int
+  imageFile: ReviewUpdateimageFileInput
   author: UserUpdateOneRequiredWithoutReviewsInput
 }
 
@@ -1879,28 +2578,28 @@ input ReviewWhereInput {
 
   """All values not ending with the given string."""
   text_not_ends_with: String
-  rating: Int
+  rating: Float
 
   """All values that are not equal to given value."""
-  rating_not: Int
+  rating_not: Float
 
   """All values that are contained in given list."""
-  rating_in: [Int!]
+  rating_in: [Float!]
 
   """All values that are not contained in given list."""
-  rating_not_in: [Int!]
+  rating_not_in: [Float!]
 
   """All values less than the given value."""
-  rating_lt: Int
+  rating_lt: Float
 
   """All values less than or equal the given value."""
-  rating_lte: Int
+  rating_lte: Float
 
   """All values greater than the given value."""
-  rating_gt: Int
+  rating_gt: Float
 
   """All values greater than or equal the given value."""
-  rating_gte: Int
+  rating_gte: Float
   likes: Int
 
   """All values that are not equal to given value."""
@@ -1976,10 +2675,11 @@ input ReviewWhereUniqueInput {
 }
 
 type Subscription {
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  book(where: BookSubscriptionWhereInput): BookSubscriptionPayload
   author(where: AuthorSubscriptionWhereInput): AuthorSubscriptionPayload
   review(where: ReviewSubscriptionWhereInput): ReviewSubscriptionPayload
+  group(where: GroupSubscriptionWhereInput): GroupSubscriptionPayload
+  book(where: BookSubscriptionWhereInput): BookSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User implements Node {
@@ -1987,12 +2687,14 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   updatedAt: DateTime!
   createdAt: DateTime!
   wantToRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
   currentRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
   completeRead(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book!]
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review!]
+  groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group!]
 }
 
 """A connection to a list of items."""
@@ -2010,10 +2712,17 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   wantToRead: BookCreateManyWithoutWantedToReadInput
   currentRead: BookCreateManyWithoutCurrentReadInput
   completeRead: BookCreateManyWithoutCompletedReadInput
   reviews: ReviewCreateManyWithoutAuthorInput
+  groups: GroupCreateManyWithoutMembersInput
+}
+
+input UserCreateManyInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateManyWithoutCompleteReadInput {
@@ -2023,6 +2732,11 @@ input UserCreateManyWithoutCompleteReadInput {
 
 input UserCreateManyWithoutCurrentReadInput {
   create: [UserCreateWithoutCurrentReadInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutGroupsInput {
+  create: [UserCreateWithoutGroupsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -2041,9 +2755,11 @@ input UserCreateWithoutCompleteReadInput {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   wantToRead: BookCreateManyWithoutWantedToReadInput
   currentRead: BookCreateManyWithoutCurrentReadInput
   reviews: ReviewCreateManyWithoutAuthorInput
+  groups: GroupCreateManyWithoutMembersInput
 }
 
 input UserCreateWithoutCurrentReadInput {
@@ -2051,7 +2767,21 @@ input UserCreateWithoutCurrentReadInput {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   wantToRead: BookCreateManyWithoutWantedToReadInput
+  completeRead: BookCreateManyWithoutCompletedReadInput
+  reviews: ReviewCreateManyWithoutAuthorInput
+  groups: GroupCreateManyWithoutMembersInput
+}
+
+input UserCreateWithoutGroupsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  imageFile: String
+  wantToRead: BookCreateManyWithoutWantedToReadInput
+  currentRead: BookCreateManyWithoutCurrentReadInput
   completeRead: BookCreateManyWithoutCompletedReadInput
   reviews: ReviewCreateManyWithoutAuthorInput
 }
@@ -2061,9 +2791,11 @@ input UserCreateWithoutReviewsInput {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   wantToRead: BookCreateManyWithoutWantedToReadInput
   currentRead: BookCreateManyWithoutCurrentReadInput
   completeRead: BookCreateManyWithoutCompletedReadInput
+  groups: GroupCreateManyWithoutMembersInput
 }
 
 input UserCreateWithoutWantToReadInput {
@@ -2071,9 +2803,11 @@ input UserCreateWithoutWantToReadInput {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   currentRead: BookCreateManyWithoutCurrentReadInput
   completeRead: BookCreateManyWithoutCompletedReadInput
   reviews: ReviewCreateManyWithoutAuthorInput
+  groups: GroupCreateManyWithoutMembersInput
 }
 
 """An edge in a connection."""
@@ -2094,6 +2828,8 @@ enum UserOrderByInput {
   email_DESC
   password_ASC
   password_DESC
+  imageFile_ASC
+  imageFile_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -2105,6 +2841,7 @@ type UserPreviousValues {
   name: String!
   email: String!
   password: String!
+  imageFile: String
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -2278,6 +3015,46 @@ input UserScalarWhereInput {
 
   """All values not ending with the given string."""
   password_not_ends_with: String
+  imageFile: String
+
+  """All values that are not equal to given value."""
+  imageFile_not: String
+
+  """All values that are contained in given list."""
+  imageFile_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageFile_not_in: [String!]
+
+  """All values less than the given value."""
+  imageFile_lt: String
+
+  """All values less than or equal the given value."""
+  imageFile_lte: String
+
+  """All values greater than the given value."""
+  imageFile_gt: String
+
+  """All values greater than or equal the given value."""
+  imageFile_gte: String
+
+  """All values containing the given string."""
+  imageFile_contains: String
+
+  """All values not containing the given string."""
+  imageFile_not_contains: String
+
+  """All values starting with the given string."""
+  imageFile_starts_with: String
+
+  """All values not starting with the given string."""
+  imageFile_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageFile_ends_with: String
+
+  """All values not ending with the given string."""
+  imageFile_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -2363,26 +3140,54 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
-input UserUpdateInput {
+input UserUpdateDataInput {
   name: String
   email: String
   password: String
+  imageFile: String
   wantToRead: BookUpdateManyWithoutWantedToReadInput
   currentRead: BookUpdateManyWithoutCurrentReadInput
   completeRead: BookUpdateManyWithoutCompletedReadInput
   reviews: ReviewUpdateManyWithoutAuthorInput
+  groups: GroupUpdateManyWithoutMembersInput
+}
+
+input UserUpdateInput {
+  name: String
+  email: String
+  password: String
+  imageFile: String
+  wantToRead: BookUpdateManyWithoutWantedToReadInput
+  currentRead: BookUpdateManyWithoutCurrentReadInput
+  completeRead: BookUpdateManyWithoutCompletedReadInput
+  reviews: ReviewUpdateManyWithoutAuthorInput
+  groups: GroupUpdateManyWithoutMembersInput
 }
 
 input UserUpdateManyDataInput {
   name: String
   email: String
   password: String
+  imageFile: String
+}
+
+input UserUpdateManyInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueNestedInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueNestedInput!]
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+  imageFile: String
 }
 
 input UserUpdateManyWithoutCompleteReadInput {
@@ -2407,6 +3212,18 @@ input UserUpdateManyWithoutCurrentReadInput {
   updateMany: [UserUpdateManyWithWhereNestedInput!]
   deleteMany: [UserScalarWhereInput!]
   upsert: [UserUpsertWithWhereUniqueWithoutCurrentReadInput!]
+}
+
+input UserUpdateManyWithoutGroupsInput {
+  create: [UserCreateWithoutGroupsInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutGroupsInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutGroupsInput!]
 }
 
 input UserUpdateManyWithoutWantToReadInput {
@@ -2437,16 +3254,31 @@ input UserUpdateWithoutCompleteReadDataInput {
   name: String
   email: String
   password: String
+  imageFile: String
   wantToRead: BookUpdateManyWithoutWantedToReadInput
   currentRead: BookUpdateManyWithoutCurrentReadInput
   reviews: ReviewUpdateManyWithoutAuthorInput
+  groups: GroupUpdateManyWithoutMembersInput
 }
 
 input UserUpdateWithoutCurrentReadDataInput {
   name: String
   email: String
   password: String
+  imageFile: String
   wantToRead: BookUpdateManyWithoutWantedToReadInput
+  completeRead: BookUpdateManyWithoutCompletedReadInput
+  reviews: ReviewUpdateManyWithoutAuthorInput
+  groups: GroupUpdateManyWithoutMembersInput
+}
+
+input UserUpdateWithoutGroupsDataInput {
+  name: String
+  email: String
+  password: String
+  imageFile: String
+  wantToRead: BookUpdateManyWithoutWantedToReadInput
+  currentRead: BookUpdateManyWithoutCurrentReadInput
   completeRead: BookUpdateManyWithoutCompletedReadInput
   reviews: ReviewUpdateManyWithoutAuthorInput
 }
@@ -2455,18 +3287,27 @@ input UserUpdateWithoutReviewsDataInput {
   name: String
   email: String
   password: String
+  imageFile: String
   wantToRead: BookUpdateManyWithoutWantedToReadInput
   currentRead: BookUpdateManyWithoutCurrentReadInput
   completeRead: BookUpdateManyWithoutCompletedReadInput
+  groups: GroupUpdateManyWithoutMembersInput
 }
 
 input UserUpdateWithoutWantToReadDataInput {
   name: String
   email: String
   password: String
+  imageFile: String
   currentRead: BookUpdateManyWithoutCurrentReadInput
   completeRead: BookUpdateManyWithoutCompletedReadInput
   reviews: ReviewUpdateManyWithoutAuthorInput
+  groups: GroupUpdateManyWithoutMembersInput
+}
+
+input UserUpdateWithWhereUniqueNestedInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateDataInput!
 }
 
 input UserUpdateWithWhereUniqueWithoutCompleteReadInput {
@@ -2479,6 +3320,11 @@ input UserUpdateWithWhereUniqueWithoutCurrentReadInput {
   data: UserUpdateWithoutCurrentReadDataInput!
 }
 
+input UserUpdateWithWhereUniqueWithoutGroupsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutGroupsDataInput!
+}
+
 input UserUpdateWithWhereUniqueWithoutWantToReadInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutWantToReadDataInput!
@@ -2487,6 +3333,12 @@ input UserUpdateWithWhereUniqueWithoutWantToReadInput {
 input UserUpsertWithoutReviewsInput {
   update: UserUpdateWithoutReviewsDataInput!
   create: UserCreateWithoutReviewsInput!
+}
+
+input UserUpsertWithWhereUniqueNestedInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutCompleteReadInput {
@@ -2499,6 +3351,12 @@ input UserUpsertWithWhereUniqueWithoutCurrentReadInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutCurrentReadDataInput!
   create: UserCreateWithoutCurrentReadInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutGroupsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutGroupsDataInput!
+  create: UserCreateWithoutGroupsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutWantToReadInput {
@@ -2676,6 +3534,46 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   password_not_ends_with: String
+  imageFile: String
+
+  """All values that are not equal to given value."""
+  imageFile_not: String
+
+  """All values that are contained in given list."""
+  imageFile_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageFile_not_in: [String!]
+
+  """All values less than the given value."""
+  imageFile_lt: String
+
+  """All values less than or equal the given value."""
+  imageFile_lte: String
+
+  """All values greater than the given value."""
+  imageFile_gt: String
+
+  """All values greater than or equal the given value."""
+  imageFile_gte: String
+
+  """All values containing the given string."""
+  imageFile_contains: String
+
+  """All values not containing the given string."""
+  imageFile_not_contains: String
+
+  """All values starting with the given string."""
+  imageFile_starts_with: String
+
+  """All values not starting with the given string."""
+  imageFile_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageFile_ends_with: String
+
+  """All values not ending with the given string."""
+  imageFile_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -2732,6 +3630,9 @@ input UserWhereInput {
   reviews_every: ReviewWhereInput
   reviews_some: ReviewWhereInput
   reviews_none: ReviewWhereInput
+  groups_every: GroupWhereInput
+  groups_some: GroupWhereInput
+  groups_none: GroupWhereInput
 }
 
 input UserWhereUniqueInput {

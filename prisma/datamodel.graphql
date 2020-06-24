@@ -3,12 +3,14 @@ type User {
   name: String!
   email: String! @unique
   password: String!
+  imageFile: String
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
   wantToRead: [Book!]! @relation(name: "WantedBookToUser", onDelete: SET_NULL)
   currentRead: [Book!]! @relation(name: "CurrentBookToUser", onDelete: SET_NULL)
   completeRead: [Book!]! @relation(name: "ReadBookToUser", onDelete: SET_NULL)
   reviews: [Review!]! @relation(name: "ReviewToUser", onDelete: CASCADE)
+  groups: [Group!]! @relation(name: "GroupMemberToUser", onDelete: SET_NULL)
 }
 
 type Book {
@@ -18,6 +20,7 @@ type Book {
   published: String!
   genre: String!
   pages: Int
+  imageFile: [String] @scalarList(strategy: RELATION)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
   author: Author! @relation(name: "BookToAuthor", onDelete: SET_NULL)
@@ -31,6 +34,7 @@ type Author {
   id: ID! @id
   name: String!
   about: String
+  imageFile: String
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
   books: [Book!]! @relation(name: "BookToAuthor", onDelete: SET_NULL)
@@ -41,8 +45,22 @@ type Review {
   text: String!
   rating: Float!
   likes: Int
+  imageFile: [String] @scalarList(strategy: RELATION)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
   author: User! @relation(name: "ReviewToUser", onDelete: SET_NULL)
   book: Book! @relation(name: "ReviewToBook", onDelete: SET_NULL)
+}
+
+type Group {
+  id: ID! @id
+  name: String!
+  description: String
+  imageFile: String
+  admin: [User!]! @relation(name: "GroupAdminToUser", onDelete: SET_NULL)
+  members: [User!]! @relation(name: "GroupMemberToUser", onDelete: SET_NULL)
+  currentRead: Book! @relation(name: "CurrentBookToGroup", onDelete: SET_NULL)
+  completedRead: [Book!]!
+    @relation(name: "CompletedBookToGroup", onDelete: SET_NULL)
+  nextRead: [Book!]! @relation(name: "NextBookToGroup", onDelete: SET_NULL)
 }

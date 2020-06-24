@@ -102,6 +102,9 @@ type Book {
   genre: String!
   pages: Int
   author: Author!
+  wantedToRead: [User!]!
+  currentRead: [User!]!
+  completedRead: [User!]!
   updatedAt: String!
   createdAt: String!
 }
@@ -118,7 +121,7 @@ type Author {
 type Review {
   id: ID!
   text: String!
-  rating: Int!
+  rating: Float!
   likes: Int
   author: User!
   book: Book!
