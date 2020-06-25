@@ -12,21 +12,28 @@ type Mutation {
   login(data: LoginUserInput): AuthPayload!
   createUser(data: CreateUserInput): AuthPayload!
   updateUser(data: UpdateUserInput): User!
-  deleteUser(userId: ID!): User!
+  deleteUser(id: ID!): User!
   createAuthor(data: CreateAuthorInput): Author!
   updateAuthor(id: ID!, data: UpdateAuthorInput): Author!
-  deleteAuthor(authorId: ID!): Author!
+  deleteAuthor(id: ID!): Author!
   createBook(data: CreateBookInput): Book!
   updateBook(data: UpdateBookInput): Book!
-  deleteBook(bookId: ID!): Book!
+  deleteBook(id: ID!): Book!
   createReview(data: CreateReviewInput): Review!
   updateReview(data: UpdateReviewInput): Review!
-  deleteReview(reviewId: ID!): Review!
+  deleteReview(id: ID!): Review!
   createGroup(data: CreateGroupInput): Group!
-  updateGroup(data: UpdateGroupInput): Group!
-  deleteGroup(groupId: ID!): Group!
+  updateGroup(id: ID!, data: UpdateGroupInput): Group!
+  deleteGroup(id: ID!): Group!
 
   shelfList(id: ID!, chose: String!): User!
+  membersToGroup(id: ID!, member: ID!, option: Option!): Group!
+}
+
+enum Option {
+  ADMIN
+  ADD
+  REMOVE
 }
 
 input LoginUserInput {
@@ -98,7 +105,7 @@ input CreateGroupInput {
   imageFile: [String]
 }
 input UpdateGroupInput {
-  name: String!
+  name: String
   description: String
   imageFile: [String]
 }
@@ -158,7 +165,7 @@ type Group {
   name: String!
   description: String
   imageFile: String
-  admin: [User!]!
+  admin: [User!]
   members: [User!]
   currentRead: Book
   completedRead: [Book!]

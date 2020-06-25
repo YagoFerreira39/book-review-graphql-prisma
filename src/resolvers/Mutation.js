@@ -211,10 +211,12 @@ const Mutation = {
 
     return newGroup;
   },
-
   async deleteGroup(parent, args, { prisma, request }, info) {
     const adminId = getUserId(request);
-    const groupExists = await prisma.exists.Group({ id: args.groupId });
+    const groupExists = await prisma.exists.Group({
+      id: args.id,
+      admin_some: { id: adminId },
+    });
 
     if (!groupExists) {
       throw new Error("Group cannot be found.");
@@ -223,11 +225,124 @@ const Mutation = {
     return prisma.mutation.deleteGroup(
       {
         where: {
-          id: args.groupId,
+          id: args.id,
         },
       },
       info
     );
+  },
+  async updateGroup(parent, args, { prisma, request }, info) {
+    const adminId = getUserId(request);
+    const groupExists = await prisma.exists.Group({
+      id: args.id,
+      admin_some: { id: adminId },
+    });
+
+    if (!groupExists) {
+      throw new Error("Group cannot be found.");
+    }
+
+    return prisma.mutation.updateGroup(
+      {
+        where: {
+          id: args.id,
+        },
+        data: args.data,
+      },
+      info
+    );
+  },
+  /**Adding and removing members */
+  async membersToGroup(parent, args, { prisma, request }, info) {
+    const adminId = getUserId(request);
+    const groupExists = await prisma.exists.Group({
+      id: args.id,
+      admin_some: { id: adminId },
+    });
+
+    if (!groupExists) {
+      throw new Error("Group cannot be found.");
+    }
+
+    if (args.option === "ADD") {
+      await prisma.mutation.updateUser({
+        where: { id: args.member },
+        data: {
+          groups: {
+            connect: {
+              id: args.id,
+            },
+          },
+        },
+      });
+      const group = await prisma.mutation.updateGroup(
+        {
+          where: { id: args.id },
+          data: {},
+          members: {
+            connect: { id: args.member },
+          },
+        },
+        info
+      );
+      return group;
+    }
+    if (args.option === "REMOVE") {
+      const memberExists = await prisma.exists.Group({
+        id: args.id,
+        admin_some: { id: adminId },
+        members_some: { id: args.member },
+      });
+      if (!memberExists) {
+        throw new Error("Member cannot be found in the group.");
+      }
+
+      await prisma.mutation.updateUser({
+        where: { id: args.member },
+        data: {
+          groups: {
+            disconnect: {
+              id: args.id,
+            },
+          },
+        },
+      });
+      const group = await prisma.mutation.updateGroup(
+        {
+          where: { id: args.id },
+          members: {
+            disconnect: { id: args.member },
+          },
+          admin: {
+            disconnect: { id: args.member },
+          },
+          data: {},
+        },
+        info
+      );
+      return group;
+    }
+    if (args.option === "ADMIN") {
+      const memberExists = await prisma.exists.Group({
+        id: args.id,
+        admin_some: { id: adminId },
+        members_some: { id: args.member },
+      });
+      if (!memberExists) {
+        throw new Error("Member cannot be found in the group.");
+      }
+      const group = await prisma.mutation.updateGroup(
+        {
+          where: { id: args.id },
+          data: {},
+          admin: {
+            connect: { id: args.member },
+          },
+        },
+        info
+      );
+      return group;
+    }
   },
 
   /**Shelf Mutation */
