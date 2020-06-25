@@ -275,7 +275,7 @@ const Mutation = {
           },
         },
       });
-      const group = await prisma.mutation.updateGroup(
+      return prisma.mutation.updateGroup(
         {
           where: { id: args.id },
           data: {},
@@ -285,7 +285,6 @@ const Mutation = {
         },
         info
       );
-      return group;
     }
     if (args.option === "REMOVE") {
       const memberExists = await prisma.exists.Group({
@@ -307,7 +306,7 @@ const Mutation = {
           },
         },
       });
-      const group = await prisma.mutation.updateGroup(
+      return prisma.mutation.updateGroup(
         {
           where: { id: args.id },
           members: {
@@ -320,7 +319,6 @@ const Mutation = {
         },
         info
       );
-      return group;
     }
     if (args.option === "ADMIN") {
       const memberExists = await prisma.exists.Group({
@@ -331,7 +329,7 @@ const Mutation = {
       if (!memberExists) {
         throw new Error("Member cannot be found in the group.");
       }
-      const group = await prisma.mutation.updateGroup(
+      return prisma.mutation.updateGroup(
         {
           where: { id: args.id },
           data: {},
@@ -341,7 +339,6 @@ const Mutation = {
         },
         info
       );
-      return group;
     }
   },
 
