@@ -174,6 +174,57 @@ const Mutation = {
     );
   },
 
+  /**Review Mutation */
+  async createReview(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+    const bookExists = await prisma.exists.Book({
+      id: args.data.book,
+    });
+    if (!bookExists) {
+      throw new Error("Book cannot be found");
+    }
+
+    return prisma.mutation.createReview(
+      {
+        data: {
+          text: args.data.text,
+          rating: args.data.rating,
+          likes: args.data.likes,
+          author: {
+            connect: {
+              id: userId,
+            },
+          },
+          book: {
+            connect: {
+              id: args.data.book,
+            },
+          },
+        },
+      },
+      info
+    );
+  },
+  async updateReview(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+    const reviewExists = await prisma.exists.Review({
+      id: args.id,
+    });
+    if (!reviewExists) {
+      throw new Error("Review cannot be found");
+    }
+
+    return prisma.mutation.updateReview(
+      {
+        where: {
+          id: args.id,
+        },
+        data: args.data,
+      },
+      info
+    );
+  },
+
   /**Group Mutation */
   async createGroup(parent, args, { prisma, request }, info) {
     const adminId = getUserId(request);

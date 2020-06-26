@@ -20,7 +20,7 @@ type Mutation {
   updateBook(data: UpdateBookInput): Book!
   deleteBook(id: ID!): Book!
   createReview(data: CreateReviewInput): Review!
-  updateReview(data: UpdateReviewInput): Review!
+  updateReview(id: ID!, data: UpdateReviewInput): Review!
   deleteReview(id: ID!): Review!
   createGroup(data: CreateGroupInput): Group!
   updateGroup(id: ID!, data: UpdateGroupInput): Group!
@@ -92,6 +92,7 @@ input CreateReviewInput {
   text: String!
   rating: Int!
   likes: Int
+  book: ID!
 }
 input UpdateReviewInput {
   text: String
