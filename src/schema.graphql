@@ -51,6 +51,7 @@ input CreateUserInput {
   email: String!
   password: String!
   imageFile: String
+  token: String
 }
 input UpdateUserInput {
   name: String
@@ -117,6 +118,7 @@ type User {
   email: String!
   password: String!
   imageFile: String
+  token: String
   wantToRead: [Book!]!
   currentRead: [Book!]!
   completeRead: [Book!]!
@@ -130,6 +132,7 @@ type Book {
   id: ID!
   title: String!
   sinopse: String
+  imageFile: [String]
   published: String!
   genre: String!
   pages: Int

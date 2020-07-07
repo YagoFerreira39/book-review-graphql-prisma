@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+/**userInputError apollo server */
 
 const hashPassword = (password) => {
   if (password.length < 8) {

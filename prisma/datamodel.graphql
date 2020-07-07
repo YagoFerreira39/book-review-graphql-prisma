@@ -4,6 +4,7 @@ type User {
   email: String! @unique
   password: String!
   imageFile: String
+  token: String
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
   wantToRead: [Book!]! @relation(name: "WantedBookToUser", onDelete: SET_NULL)

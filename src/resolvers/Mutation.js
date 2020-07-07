@@ -45,7 +45,6 @@ const Mutation = {
         password: await hashPassword(args.data.password),
       },
     });
-
     return {
       user,
       token: generateToken(user.id),
