@@ -8,7 +8,7 @@ import {
   Dropdown,
   Button,
 } from "semantic-ui-react";
-
+import shelfOptions from "../../utils/shelfOptions";
 import "./userPage.css";
 
 const UserBooks = ({
@@ -41,12 +41,6 @@ const UserBooks = ({
   }
   console.log("usersBook", books);
 
-  const shelfOptions = [
-    { key: 1, text: "Want To Read", value: 1 },
-    { key: 2, text: "Current Read", value: 2 },
-    { key: 3, text: "Complete Read", value: 3 },
-  ];
-
   function handleRate(e, { rating }) {
     setRate(rating);
   }
@@ -61,7 +55,13 @@ const UserBooks = ({
               <List.Item key={book.id} className="user-books-shelf">
                 <Image avatar src="" />
                 <List.Content>
-                  <List.Header id="book-title">{book.title}</List.Header>
+                  <List.Header
+                    id="book-title"
+                    as={Link}
+                    to={`/book/detail/${book.id}`}
+                  >
+                    {book.title}
+                  </List.Header>
                   <List.Content as={Link} to={`/${book.author.name}`}>
                     {book.author.name}
                   </List.Content>

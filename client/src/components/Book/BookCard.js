@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, Icon, Image } from "semantic-ui-react";
 
 const BookCard = ({
-  book: { title, sinopse, genre, pages, published, author },
+  book: { id, title, sinopse, genre, pages, published, author },
 }) => {
   return (
     <Card as={Link} to="/">
@@ -13,7 +13,9 @@ const BookCard = ({
         ui={false}
       />
       <Card.Content>
-        <Card.Header>{title}</Card.Header>
+        <Card.Header as={Link} to={`/book/detail/${id}`}>
+          {title}
+        </Card.Header>
         <Card.Meta>
           <span className="date">{genre}</span>
         </Card.Meta>
