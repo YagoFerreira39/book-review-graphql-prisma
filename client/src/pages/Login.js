@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Form, Button, Grid, Icon } from "semantic-ui-react";
 import { gql } from "apollo-boost";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, UseQuery } from "@apollo/react-hooks";
 import { AuthContext } from "../context/auth";
 import { useForm } from "../utils/hooks";
 
@@ -77,6 +77,7 @@ const LOGIN_USER = gql`
         id
         name
         email
+        imageFile
       }
       token
     }

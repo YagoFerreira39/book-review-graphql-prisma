@@ -1,0 +1,22 @@
+.ui.list > .user-books-shelf {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ui.list > .item .header#book-title {
+  margin-bottom: 10px;
+}
+.ui.button.write-rvw-btn {
+  background: #e0e0e06b none;
+}
+.ui.button.write-rvw-btn:hover {
+  color: rgba(107, 105, 105, 0.795);
+  background: #3385ac2b;
+}
+
+.ui.button.review-btn {
+  padding: 6px 10px !important;
+  margin: 0.15rem 1rem !important;
+  background: #e0e0e06b none;
+}

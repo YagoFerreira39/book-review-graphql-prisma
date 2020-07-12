@@ -11,6 +11,7 @@ const Mutation = {
         email: args.data.email,
       },
     });
+    console.log(user);
 
     if (!user) {
       throw new Error("User cannot be found.");

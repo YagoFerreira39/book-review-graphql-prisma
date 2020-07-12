@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import BOOK_QUERY from "../../Queries/BookQuery";
-import {
-  Grid,
-  Image,
-  Segment,
-  Dimmer,
-  Loader,
-  GridColumn,
-} from "semantic-ui-react";
+import { Grid, Image, Segment, Dimmer, Loader } from "semantic-ui-react";
 import BookCard from "./BookCard";
 
 const BookShelf = (props) => {
@@ -28,7 +21,11 @@ const BookShelf = (props) => {
       </Grid.Row>
       <Grid.Row>
         {loading ? (
-          <h1>LOADING</h1>
+          <Segment>
+            <Dimmer>
+              <Loader />
+            </Dimmer>
+          </Segment>
         ) : (
           fetchedBooks.length &&
           fetchedBooks.map((book) => (

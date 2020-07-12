@@ -7,6 +7,36 @@ const USERS_QUERY = gql`
       name
       email
       imageFile
+      wantToRead {
+        id
+        title
+        genre
+        imageFile
+        author {
+          id
+          name
+        }
+      }
+      currentRead {
+        id
+        title
+        genre
+        imageFile
+        author {
+          id
+          name
+        }
+      }
+      completeRead {
+        id
+        title
+        genre
+        imageFile
+        author {
+          id
+          name
+        }
+      }
       groups {
         id
         name
