@@ -11,7 +11,8 @@ const UserProfile = (props) => {
   const { loading, error, data, refetch } = useQuery(USERS_QUERY);
 
   useEffect(() => {
-    if (data) {
+    if (data && user) {
+      console.log(user);
       data.users.map((u) => {
         if (u.id === user.user.id) {
           setUserData(u);

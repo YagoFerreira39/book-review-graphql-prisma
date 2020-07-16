@@ -2,8 +2,39 @@ import hashPassword from "../utils/hashPassword";
 import generateToken from "../utils/generateToken";
 import getUserId from "../utils/getUserId";
 import bcrypt from "bcryptjs";
+import getFilename from "../utils/getFilename";
+const cloudinary = require("cloudinary");
+
+cloudinary.config({
+  cloud_name: "yfer80",
+  api_key: "944451462112464",
+  api_secret: "iBVDhPc-cRBTZGPe_rwNK1osLJQ",
+});
 
 const Mutation = {
+  async uploadImage(parent, { filename }, { prisma, request }, info) {
+    const userId = getUserId(request);
+    filename = getFilename(filename);
+
+    try {
+      const file = await cloudinary.v2.uploader.upload(filename);
+      if (file) {
+        return prisma.mutation.updateUser(
+          {
+            where: {
+              id: userId,
+            },
+            data: {
+              imageFile: file.url,
+            },
+          },
+          info
+        );
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
   /**User Mutation */
   async login(parent, args, { prisma }, info) {
     const user = await prisma.query.user({

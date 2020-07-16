@@ -5,6 +5,7 @@ import { Card, Icon, Image } from "semantic-ui-react";
 const BookCard = ({
   book: { id, title, sinopse, genre, pages, published, author },
 }) => {
+  console.log(author.name);
   return (
     <Card as={Link} to="/">
       <Image

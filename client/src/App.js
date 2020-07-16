@@ -9,7 +9,8 @@ import Register from "./pages/Register";
 import MenuBar from "./components/MenuBar";
 import { AuthProvider } from "./context/auth";
 import AuthRoute from "./utils/AuthRoute";
-import BookDetails from "./components/Book/BookDetails";
+import BookPage from "./components/Book/BookPage";
+import BookShelf from "./components/Book/BookShelf";
 
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
           <Route exact path="/" component={Home} />
           <AuthRoute exact path="/login" component={Login} />
           <AuthRoute exact path="/register" component={Register} />
-          <Route exact path="/book/detail/:id" component={BookDetails} />
+          <Route exact path="/book/detail/:id" component={BookPage} />
+          <Route exact path="/book/" component={BookShelf} />
         </Container>
       </Router>
     </AuthProvider>

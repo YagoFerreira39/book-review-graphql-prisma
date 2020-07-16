@@ -17,6 +17,15 @@ const Query = {
     return prisma.query.books(opArgs, info);
   },
 
+  book(parent, args, { prisma }, info) {
+    const opArgs = {
+      where: {
+        id: args.id,
+      },
+    };
+    return prisma.query.book(opArgs, info);
+  },
+
   groups(parent, args, { prisma }, info) {
     const opArgs = {};
 

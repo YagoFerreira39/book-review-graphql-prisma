@@ -2,6 +2,7 @@ type Query {
   user(query: String): User!
   users(query: String): [User!]!
   books: [Book!]!
+  book(id: ID!): Book!
   authors: [Author!]!
   reviews: [Review!]!
   groups: [Group!]!
@@ -28,6 +29,8 @@ type Mutation {
 
   shelfList(id: ID!, chose: String!): User!
   membersToGroup(id: ID!, member: ID!, option: Option!): Group!
+
+  uploadImage(filename: String!): User!
 }
 
 enum Option {

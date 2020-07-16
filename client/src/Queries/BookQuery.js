@@ -18,4 +18,22 @@ const BOOK_QUERY = gql`
   }
 `;
 
-export { BOOK_QUERY as default };
+const SINGLE_BOOK_QUERY = gql`
+  query book($id: ID!) {
+    book(id: $id) {
+      id
+      title
+      sinopse
+      imageFile
+      published
+      genre
+      pages
+      author {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export { BOOK_QUERY, SINGLE_BOOK_QUERY };
