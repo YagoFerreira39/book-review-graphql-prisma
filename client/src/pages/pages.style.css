@@ -1,0 +1,46 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.login-container,
+.form-container {
+  margin-top: 30px;
+}
+
+.reg-input .ui.input input {
+  padding-left: 40px;
+}
+.reg-icons {
+  position: absolute;
+  padding: 8px 10px !important;
+  z-index: 1;
+}
+i.icon {
+  color: teal;
+}
+
+.register-file-upload {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#signup-btn {
+  position: absolute;
+  right: 0;
+  background-color: teal;
+}
+.button:hover {
+  transition: 0.5s;
+  opacity: 0.8;
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    width: 80%;
+  }
+  .form-input {
+    margin-top: 40px;
+  }
+}

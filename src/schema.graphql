@@ -29,8 +29,6 @@ type Mutation {
 
   shelfList(id: ID!, chose: String!): User!
   membersToGroup(id: ID!, member: ID!, option: Option!): Group!
-
-  uploadImage(filename: String!): User!
 }
 
 enum Option {

@@ -65,3 +65,9 @@ type Group {
     @relation(name: "CompletedBookToGroup", onDelete: SET_NULL)
   nextRead: [Book!] @relation(name: "NextBookToGroup", onDelete: SET_NULL)
 }
+
+type File {
+  id: ID! @id
+  name: String!
+  path: String!
+}

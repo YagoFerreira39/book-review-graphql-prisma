@@ -1,11 +1,15 @@
 # source: https://book-review-yfer-05143b6625.herokuapp.com/book-review-yfer/dev
-# timestamp: Mon Jun 29 2020 11:35:07 GMT-0300 (Brasilia Standard Time)
+# timestamp: Fri Jul 17 2020 13:38:26 GMT-0300 (Brasilia Standard Time)
 
 type AggregateAuthor {
   count: Int!
 }
 
 type AggregateBook {
+  count: Int!
+}
+
+type AggregateFile {
   count: Int!
 }
 
@@ -1455,6 +1459,236 @@ input BookWhereUniqueInput {
 
 scalar DateTime
 
+type File implements Node {
+  id: ID!
+  name: String!
+  path: String!
+}
+
+"""A connection to a list of items."""
+type FileConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [FileEdge]!
+  aggregate: AggregateFile!
+}
+
+input FileCreateInput {
+  id: ID
+  name: String!
+  path: String!
+}
+
+"""An edge in a connection."""
+type FileEdge {
+  """The item at the end of the edge."""
+  node: File!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum FileOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  path_ASC
+  path_DESC
+}
+
+type FilePreviousValues {
+  id: ID!
+  name: String!
+  path: String!
+}
+
+type FileSubscriptionPayload {
+  mutation: MutationType!
+  node: File
+  updatedFields: [String!]
+  previousValues: FilePreviousValues
+}
+
+input FileSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FileSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FileSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FileSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: FileWhereInput
+}
+
+input FileUpdateInput {
+  name: String
+  path: String
+}
+
+input FileUpdateManyMutationInput {
+  name: String
+  path: String
+}
+
+input FileWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FileWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FileWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FileWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  path: String
+
+  """All values that are not equal to given value."""
+  path_not: String
+
+  """All values that are contained in given list."""
+  path_in: [String!]
+
+  """All values that are not contained in given list."""
+  path_not_in: [String!]
+
+  """All values less than the given value."""
+  path_lt: String
+
+  """All values less than or equal the given value."""
+  path_lte: String
+
+  """All values greater than the given value."""
+  path_gt: String
+
+  """All values greater than or equal the given value."""
+  path_gte: String
+
+  """All values containing the given string."""
+  path_contains: String
+
+  """All values not containing the given string."""
+  path_not_contains: String
+
+  """All values starting with the given string."""
+  path_starts_with: String
+
+  """All values not starting with the given string."""
+  path_not_starts_with: String
+
+  """All values ending with the given string."""
+  path_ends_with: String
+
+  """All values not ending with the given string."""
+  path_not_ends_with: String
+}
+
+input FileWhereUniqueInput {
+  id: ID
+}
+
 type Group implements Node {
   id: ID!
   name: String!
@@ -2001,31 +2235,37 @@ type Mutation {
   createAuthor(data: AuthorCreateInput!): Author!
   createReview(data: ReviewCreateInput!): Review!
   createGroup(data: GroupCreateInput!): Group!
+  createFile(data: FileCreateInput!): File!
   createBook(data: BookCreateInput!): Book!
   createUser(data: UserCreateInput!): User!
   updateAuthor(data: AuthorUpdateInput!, where: AuthorWhereUniqueInput!): Author
   updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review
   updateGroup(data: GroupUpdateInput!, where: GroupWhereUniqueInput!): Group
+  updateFile(data: FileUpdateInput!, where: FileWhereUniqueInput!): File
   updateBook(data: BookUpdateInput!, where: BookWhereUniqueInput!): Book
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteAuthor(where: AuthorWhereUniqueInput!): Author
   deleteReview(where: ReviewWhereUniqueInput!): Review
   deleteGroup(where: GroupWhereUniqueInput!): Group
+  deleteFile(where: FileWhereUniqueInput!): File
   deleteBook(where: BookWhereUniqueInput!): Book
   deleteUser(where: UserWhereUniqueInput!): User
   upsertAuthor(where: AuthorWhereUniqueInput!, create: AuthorCreateInput!, update: AuthorUpdateInput!): Author!
   upsertReview(where: ReviewWhereUniqueInput!, create: ReviewCreateInput!, update: ReviewUpdateInput!): Review!
   upsertGroup(where: GroupWhereUniqueInput!, create: GroupCreateInput!, update: GroupUpdateInput!): Group!
+  upsertFile(where: FileWhereUniqueInput!, create: FileCreateInput!, update: FileUpdateInput!): File!
   upsertBook(where: BookWhereUniqueInput!, create: BookCreateInput!, update: BookUpdateInput!): Book!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyAuthors(data: AuthorUpdateManyMutationInput!, where: AuthorWhereInput): BatchPayload!
   updateManyReviews(data: ReviewUpdateManyMutationInput!, where: ReviewWhereInput): BatchPayload!
   updateManyGroups(data: GroupUpdateManyMutationInput!, where: GroupWhereInput): BatchPayload!
+  updateManyFiles(data: FileUpdateManyMutationInput!, where: FileWhereInput): BatchPayload!
   updateManyBooks(data: BookUpdateManyMutationInput!, where: BookWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   deleteManyAuthors(where: AuthorWhereInput): BatchPayload!
   deleteManyReviews(where: ReviewWhereInput): BatchPayload!
   deleteManyGroups(where: GroupWhereInput): BatchPayload!
+  deleteManyFiles(where: FileWhereInput): BatchPayload!
   deleteManyBooks(where: BookWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
@@ -2061,16 +2301,19 @@ type Query {
   authors(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Author]!
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review]!
   groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group]!
+  files(where: FileWhereInput, orderBy: FileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [File]!
   books(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Book]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   author(where: AuthorWhereUniqueInput!): Author
   review(where: ReviewWhereUniqueInput!): Review
   group(where: GroupWhereUniqueInput!): Group
+  file(where: FileWhereUniqueInput!): File
   book(where: BookWhereUniqueInput!): Book
   user(where: UserWhereUniqueInput!): User
   authorsConnection(where: AuthorWhereInput, orderBy: AuthorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AuthorConnection!
   reviewsConnection(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReviewConnection!
   groupsConnection(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GroupConnection!
+  filesConnection(where: FileWhereInput, orderBy: FileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FileConnection!
   booksConnection(where: BookWhereInput, orderBy: BookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BookConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
@@ -2680,6 +2923,7 @@ type Subscription {
   author(where: AuthorSubscriptionWhereInput): AuthorSubscriptionPayload
   review(where: ReviewSubscriptionWhereInput): ReviewSubscriptionPayload
   group(where: GroupSubscriptionWhereInput): GroupSubscriptionPayload
+  file(where: FileSubscriptionWhereInput): FileSubscriptionPayload
   book(where: BookSubscriptionWhereInput): BookSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }

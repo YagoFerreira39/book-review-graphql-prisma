@@ -5,6 +5,8 @@ import { useMutation, UseQuery } from "@apollo/react-hooks";
 import { AuthContext } from "../context/auth";
 import { useForm } from "../utils/hooks";
 
+import "./pages.style.css";
+
 function Login(props) {
   const context = useContext(AuthContext);
   const { onChange, onSubmit, values } = useForm(loginUserCB, {
@@ -34,39 +36,34 @@ function Login(props) {
   }
 
   return (
-    <Grid>
-      <Grid.Column width={8} />
-      <Grid.Column width={8}>
+    <div className="container">
+      <div className="login-container">
         <h1>Sign In</h1>
-        <Form onSubmit={onSubmit} noValidate>
-          <Form.Field>
-            <Icon name="user circle" />
-            <Form.Input
-              label="Email"
-              placeholder="Email"
-              name="email"
-              width={10}
-              value={values.email}
-              onChange={onChange}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Icon name="lock" />
-            <Form.Input
-              label="Password"
-              placeholder="Password"
-              name="password"
-              width={10}
-              value={values.password}
-              onChange={onChange}
-            />
-          </Form.Field>
-          <Button primary type="submit">
+        <Form className="form-input" onSubmit={onSubmit} noValidate>
+          <Icon className="reg-icons" name="user" />
+          <Form.Input
+            className="reg-input"
+            placeholder="Email"
+            name="email"
+            value={values.email}
+            onChange={onChange}
+          />
+
+          <Icon className="reg-icons" name="lock" />
+          <Form.Input
+            className="reg-input"
+            placeholder="Password"
+            name="password"
+            value={values.password}
+            onChange={onChange}
+          />
+
+          <Button id="signup-btn" primary type="submit">
             Submit
           </Button>
         </Form>
-      </Grid.Column>
-    </Grid>
+      </div>
+    </div>
   );
 }
 
